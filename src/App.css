@@ -14,11 +14,15 @@
 }
 
 .courses {
-  width: 50%;
+  height: 100%;
+  padding-left: 24px;
+  padding-top: 5px;
 }
 
 .preferences {
-  width: 50%;
+  height: 100%;
+  padding-left: 24px;
+  padding-top: 5px;
 }
 
 .paper {
