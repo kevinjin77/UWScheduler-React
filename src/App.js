@@ -2,6 +2,7 @@ import React from 'react';
 import './App.css';
 
 import CourseInfo from './components/CourseInfo'
+import ScheduleCard from './components/ScheduleCard'
 
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
@@ -9,6 +10,26 @@ import AppBar from '@material-ui/core/AppBar';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+
+var chartData = {
+  labels: ['Gap', 'Lunch', 'Professor'],
+  datasets: [{
+    label: 'Rating',
+    fillColor: "rgba(0,220,220,0.2)",
+    strokeColor: "rgba(0,220,220,1)",
+    pointColor: "rgba(0,220,220,1)",
+    pointStrokeColor: "#fff",
+    pointHighlightFill: "#fff",
+    pointHighlightStroke: "rgba(220,220,220,1)",
+    data: [20, 10, 4]
+  }]
+}
+
+var chartOptions = {
+  legend: {
+    display: false
+  }
+}
 
 function App() {
   return (
@@ -34,24 +55,13 @@ function App() {
             </Paper>
           </Grid>
         </Grid>
-        {/* <div className='inputForm'>
-          <div className='courses'>
-            <Paper className='paper'>
-              Test
-            </Paper>
-          </div>
-          <div className='preferences'>
-            <Paper className='paper'>
-              Test 2
-            </Paper>
-          </div>
-        </div> */}
         <div className='submitSection'>
           <Button variant="contained" color="primary">
             Generate Schedules
           </Button>
         </div>
       </div>
+      <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
       <div className='schedules'></div>
     </div>
   );
