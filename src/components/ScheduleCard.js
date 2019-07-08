@@ -6,7 +6,7 @@ import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
 import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
-import FavoriteIcon from '@material-ui/icons/Favorite';
+import CallMadeIcon from '@material-ui/icons/CallMade';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
 import Table from '@material-ui/core/Table';
 import TableBody from '@material-ui/core/TableBody';
@@ -18,22 +18,28 @@ import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
+import Slide from '@material-ui/core/Slide';
 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import '../main.scss'
 
 var RadarChart = require("react-chartjs").Radar;
 
-function createData(course, time, instructor) {
-  return { course, time, instructor };
+const Transition = React.forwardRef(function Transition(props, ref) {
+  return <Slide direction="up" ref={ref} {...props} />;
+});
+
+function createData(course, time, instructor, section, enrolled, location, rating) {
+  return { course, time, instructor, section, enrolled, location, rating };
 }
 
 const rows = [
-  createData('CS343', '14:30 - 15:50 TTh', 'Buhr, Peter A'),
-  createData('CS349', '11:30 - 12:20 MWF', 'Avery, Jeffery'),
-  createData('CS348', '11:30 - 12:20 MWF', 'Avery, Jeffery'),
-  createData('CS350', '11:30 - 12:20 MWF', 'Avery, Jeffery'),
-  createData('CS331', '11:30 - 12:20 MWF', 'Avery, Jeffery')
+  createData('CS343', '14:30 - 15:50 TTh', 'Buhr, Peter A', 'LEC 001', '0/80', 'MC 1056', 4.6),
+  createData('CS349', '11:30 - 12:20 MWF', 'Avery, Jeffery', 'LEC 003', '0/180', 'MC 1056', 2.6),
+  createData('CS348', '11:30 - 12:20 MWF', 'Avery, Jeffery', 'LEC 004', '0/90', 'MC 1056', 3.0),
+  createData('CS350', '11:30 - 12:20 MWF', 'Avery, Jeffery', 'LEC 002', '0/80', 'MC 1056', 4.3),
+  createData('CS331', '11:30 - 12:20 MWF', 'Avery, Jeffery', 'LEC 002', '0/120', 'MC 1056', 4.4)
 ];
 
 const styles = {
@@ -46,7 +52,16 @@ const styles = {
     justifyContent: 'center'
   },
   cardContent: {
-    paddingTop: 0
+    paddingTop: 0,
+    paddingBottom: '5px'
+  },
+  cardActions: {
+    display: 'flex',
+    justifyContent: 'flex-end'
+  },
+  rightIcon: {
+    fontSize: '1rem',
+    marginLeft: '4px'
   }
 };
 
@@ -107,13 +122,15 @@ class ScheduleCard extends Component {
             </TableBody>
           </Table>
         </CardContent>
-        <CardActions disableSpacing>
-          <IconButton aria-label="Add to favorites" onClick={this.handleOpen}>
-            <FavoriteIcon />
-          </IconButton>
+        <CardActions disableSpacing style={styles.cardActions}>
+          <Button size="small" onClick={this.handleOpen}>
+            Detailed View
+            <CallMadeIcon style={styles.rightIcon} />
+          </Button>
           <Dialog
             fullWidth
             maxWidth={"xl"}
+            TransitionComponent={Transition}
             open={this.state.open}
             onClose={this.handleClose}
             aria-labelledby="max-width-dialog-title"
@@ -124,8 +141,12 @@ class ScheduleCard extends Component {
                 <TableHead>
                   <TableRow>
                     <TableCell>Course</TableCell>
+                    <TableCell>Section</TableCell>
+                    <TableCell>Enrolled</TableCell>
                     <TableCell>Time</TableCell>
+                    <TableCell>Location</TableCell>
                     <TableCell>Instructor</TableCell>
+                    <TableCell>Instructor Rating</TableCell>
                   </TableRow>
                 </TableHead>
                 <TableBody>
@@ -134,8 +155,12 @@ class ScheduleCard extends Component {
                       <TableCell component="th" scope="row">
                         {row.course}
                       </TableCell>
+                      <TableCell>{row.section}</TableCell>
+                      <TableCell>{row.enrolled}</TableCell>
                       <TableCell>{row.time}</TableCell>
+                      <TableCell>{row.location}</TableCell>
                       <TableCell>{row.instructor}</TableCell>
+                      <TableCell>{row.rating}</TableCell>
                     </TableRow>
                   ))}
                 </TableBody>
