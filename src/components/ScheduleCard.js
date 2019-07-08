@@ -23,6 +23,7 @@ import Slide from '@material-ui/core/Slide';
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
 import '../main.scss'
+import { Typography } from '@material-ui/core';
 
 var RadarChart = require("react-chartjs").Radar;
 
@@ -50,6 +51,10 @@ const styles = {
     display: 'flex',
     alignItems: 'center',
     justifyContent: 'center'
+  },
+  cardTitle: {
+    fontWeight: 500,
+    fontSize: '1rem'
   },
   cardContent: {
     paddingTop: 0,
@@ -85,8 +90,9 @@ class ScheduleCard extends Component {
     return (
       <Card style={styles.card}>
         <CardHeader
+          style={styles.cardHeader}
           avatar={
-            <Avatar aria-label="Recipe">
+            <Avatar aria-label="Number">
               #1
             </Avatar>
           }
@@ -95,7 +101,7 @@ class ScheduleCard extends Component {
               <MoreVertIcon />
             </IconButton>
           }
-          title="Overall Rating: 67"
+          title={<Typography style={styles.cardTitle}>Overall Rating: 67</Typography>}
         />
         <div style={styles.chart}>
           <RadarChart data={this.props.chartData} options={this.props.chartOptions}/>

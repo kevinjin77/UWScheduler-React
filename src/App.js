@@ -11,6 +11,9 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
+const styles = {
+}
+
 var chartData = {
   labels: ['Gap', 'Lunch', 'Professor'],
   datasets: [{
@@ -61,8 +64,25 @@ function App() {
           </Button>
         </div>
       </div>
-      <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
-      <div className='schedules'></div>
+      <div className='schedules'>
+        <Grid container justify="center" spacing={2}>
+          <Grid item>
+            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+          </Grid>
+          <Grid item>
+            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+          </Grid>
+          <Grid item>
+            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+          </Grid>
+          <Grid item>
+            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+          </Grid>
+          <Grid item>
+            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+          </Grid>
+        </Grid>
+      </div>
     </div>
   );
 }

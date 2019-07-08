@@ -28,3 +28,8 @@
 .paper {
   height: 100%;
 }
+
+.schedules {
+  display:flex;
+  justify-content: center
+}
