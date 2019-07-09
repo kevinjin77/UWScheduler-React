@@ -7,6 +7,12 @@ import TextField from '@material-ui/core/TextField';
 import Paper from '@material-ui/core/Paper';
 import MenuItem from '@material-ui/core/MenuItem';
 import { makeStyles } from '@material-ui/core/styles';
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemSecondaryAction from '@material-ui/core/ListItemSecondaryAction';
+import ListItemText from '@material-ui/core/ListItemText';
+import IconButton from '@material-ui/core/IconButton';
+import DeleteIcon from '@material-ui/icons/Delete';
 
 import { suggestions } from '../courseList.js'
 
@@ -28,10 +34,6 @@ function renderInputComponent(inputProps) {
       {...other}
     />
   );
-}
-
-function handleClick() {
-  console.log('tse')
 }
 
 function renderSuggestion(suggestion, { query, isHighlighted }) {
@@ -107,6 +109,7 @@ export default function IntegrationAutosuggest() {
   const classes = useStyles();
   const [state, setState] = React.useState({
     single: '',
+    courses: []
   });
 
   const [stateSuggestions, setSuggestions] = React.useState([]);
@@ -120,16 +123,30 @@ export default function IntegrationAutosuggest() {
   };
 
   const handleChange = name => (event, { newValue }) => {
+    console.log(name)
     setState({
       ...state,
       [name]: newValue,
     });
   };
 
-  const onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) =>{
+  const onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
     //Here you do whatever you want with the values
-    alert(suggestionValue); //For example alert the selected value
+    setState({
+      single: '',
+      courses: state.courses.concat([suggestionValue])
+    })
+
+    console.log(state.courses)
   };
+
+  const handleDelete = (idx) => {
+    console.log(idx)
+    setState({
+      ...state,
+      courses: state.courses.splice(idx)
+    })
+  }
 
   const autosuggestProps = {
     renderInputComponent,
@@ -147,8 +164,8 @@ export default function IntegrationAutosuggest() {
         inputProps={{
           classes,
           id: 'react-autosuggest-simple',
-          label: 'Country',
-          placeholder: 'Search a country (start with a)',
+          label: 'Course',
+          placeholder: 'Enter a course code',
           value: state.single,
           onChange: handleChange('single'),
         }}
@@ -163,8 +180,26 @@ export default function IntegrationAutosuggest() {
             {options.children}
           </Paper>
         )}
-        onSuggestionSelected={this.onSuggestionSelected}
+        onSuggestionSelected={onSuggestionSelected}
       />
+      <List dense>
+        {state.courses.map((course, idx) => {
+          return (
+            <ListItem key={idx}>
+              <ListItemText
+                primary={course}
+                secondary={idx}
+              />
+              <ListItemSecondaryAction>
+                <IconButton edge="end" aria-label="Delete">
+                  <DeleteIcon />
+                </IconButton>
+              </ListItemSecondaryAction>
+            </ListItem>
+          )
+        }
+        )}
+      </List>
     </div>
   );
 }
