@@ -6,6 +6,8 @@ import MenuItem from '@material-ui/core/MenuItem';
 import FormControl from '@material-ui/core/FormControl';
 import Select from '@material-ui/core/Select';
 
+import Demo from './Autocomplete'
+
 const styles = {
 };
 
@@ -41,6 +43,7 @@ class CourseInfo extends Component {
           margin="normal"
         />
         <br/>
+        <Demo />
         <FormControl>
           <InputLabel htmlFor="age-simple">Age</InputLabel>
           <Select
