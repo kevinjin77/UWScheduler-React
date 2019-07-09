@@ -1,25 +1,39 @@
 import React, { Component } from 'react';
 
 import TextField from '@material-ui/core/TextField';
-import InputLabel from '@material-ui/core/InputLabel';
-import MenuItem from '@material-ui/core/MenuItem';
-import FormControl from '@material-ui/core/FormControl';
-import Select from '@material-ui/core/Select';
-
+import Radio from '@material-ui/core/Radio';
+import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Demo from './Autocomplete'
+import List from '@material-ui/core/List';
+import ListItem from '@material-ui/core/ListItem';
+import ListItemText from '@material-ui/core/ListItemText';
 
 const styles = {
+  leftRadio: {
+    paddingRight: '5vw'
+  },
+  instructions: {
+    fontSize: '14px'
+  }
 };
 
 class CourseInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      mode: 'manual',
         form: {
           term: '',
           numCourses: 2
         }
     };
+  }
+
+  handleMode = event => {
+    this.setState({
+      mode: event.target.value
+    })
   }
 
   handleChange = name => event => {
@@ -34,32 +48,58 @@ class CourseInfo extends Component {
   render() {
     const { form: {term, numCourses} } = this.state;
     return (
-      <form noValidate autoComplete="off">
-        <TextField
-          id="term"
-          label="Term"
-          value={term}
-          onChange={this.handleChange('term')}
-          margin="normal"
-        />
-        <br/>
-        <Demo />
-        <FormControl>
-          <InputLabel htmlFor="age-simple">Age</InputLabel>
-          <Select
-            value={numCourses}
-            onChange={this.handleChange('numCourses')}
-            inputProps={{
-              name: 'age',
-              id: 'age-simple',
-            }}
-          >
-            <MenuItem value={10}>Ten</MenuItem>
-            <MenuItem value={20}>Twenty</MenuItem>
-            <MenuItem value={30}>Thirty</MenuItem>
-          </Select>
-        </FormControl>
-      </form>
+      <div>
+        <RadioGroup aria-label="position" name="position" value={this.state.mode} onChange={this.handleMode} row>
+          <FormControlLabel
+            style={styles.leftRadio}
+            checked={this.state.mode === 'manual'}
+            value="manual"
+            control={<Radio color="primary" />}
+            label="Manual Entry"
+            labelPlacement="end"
+          />
+          <FormControlLabel
+            checked={this.state.mode === 'quest'}
+            value="quest"
+            control={<Radio color="primary" />}
+            label="Import From Quest"
+            labelPlacement="end"
+          />
+        </RadioGroup>
+        {this.state.mode === 'manual' ? 
+          <form noValidate autoComplete="off">
+            <TextField
+              id="term"
+              label="Term"
+              value={term}
+              onChange={this.handleChange('term')}
+              margin="normal"
+            />
+            <br/>
+            <Demo />
+          </form> :
+          <div>
+            <p style={styles.instructions}>
+              1. <a href="https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG" target="_blank">Sign in to Quest</a> and click <b>Enroll</b>. <br/><br/>
+              2. Click the <b>My Class Schedule</b> tab. <br/><br/>
+              3. Select all and copy. (List View) <br/><br/>
+              4. Paste into the box below! <br/><br/>
+              5. Click the "Generate Schedules" button below. <br/>
+            </p>
+            <TextField
+              id="quest-input"
+              label="Paste Here!"
+              margin="normal"
+              fullWidth
+              variant="outlined"
+              multiline
+              rows="12"
+              rowsMax="12"
+            />
+          </div>
+        }
+        
+      </div>
     );
   }
 }

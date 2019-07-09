@@ -7,11 +7,15 @@ import ScheduleCard from './components/ScheduleCard'
 import Button from '@material-ui/core/Button';
 import Paper from '@material-ui/core/Paper';
 import AppBar from '@material-ui/core/AppBar';
+import EventIcon from '@material-ui/icons/Event';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
 const styles = {
+  eventIcon: {
+    paddingRight: '10px'
+  }
 }
 
 var chartData = {
@@ -40,6 +44,7 @@ function App() {
       <div className='landingPage'>
         <AppBar position="static">
           <Toolbar>
+            <EventIcon style={styles.eventIcon} />
             <Typography variant="h6" color="inherit">
               UWScheduler
             </Typography>
@@ -65,7 +70,7 @@ function App() {
         </div>
       </div>
       <div className='schedules'>
-        <Grid container justify="center" spacing={2}>
+        <Grid style={{margin: 0}} container justify="center" spacing={2}>
           <Grid item>
             <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
           </Grid>

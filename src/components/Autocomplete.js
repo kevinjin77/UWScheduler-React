@@ -80,7 +80,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     height: 250,
     flexGrow: 1,
-    maxWidth: '400px'
+    width: '85%',
+    maxWidth: '40vw'
   },
   container: {
     position: 'relative',
@@ -123,7 +124,6 @@ export default function IntegrationAutosuggest() {
   };
 
   const handleChange = name => (event, { newValue }) => {
-    console.log(name)
     setState({
       ...state,
       [name]: newValue,
@@ -132,18 +132,23 @@ export default function IntegrationAutosuggest() {
 
   const onSuggestionSelected = (event, { suggestion, suggestionValue, suggestionIndex, sectionIndex, method }) => {
     //Here you do whatever you want with the values
-    setState({
-      single: '',
-      courses: state.courses.concat([suggestionValue])
-    })
-
-    console.log(state.courses)
+    if (state.courses.includes(suggestionValue)) {
+      setState({
+        ...state,
+        single: ''
+      })
+    } else {
+      setState({
+        single: '',
+        courses: state.courses.concat([suggestionValue])
+      })
+    }
   };
 
   const handleDelete = (idx) => {
     console.log(idx)
     setState({
-      ...state,
+      single: '',
       courses: state.courses.splice(idx)
     })
   }
@@ -182,16 +187,16 @@ export default function IntegrationAutosuggest() {
         )}
         onSuggestionSelected={onSuggestionSelected}
       />
-      <List dense>
+      {state.courses.length > 0 && <h4 style={{marginBottom: 0}}>My Courses</h4>}
+      <List style={{maxHeight: '40vh', overflowY: 'auto'}} dense>
         {state.courses.map((course, idx) => {
           return (
             <ListItem key={idx}>
               <ListItemText
                 primary={course}
-                secondary={idx}
               />
               <ListItemSecondaryAction>
-                <IconButton edge="end" aria-label="Delete">
+                <IconButton onClick={handleDelete} edge="end" aria-label="Delete">
                   <DeleteIcon />
                 </IconButton>
               </ListItemSecondaryAction>
