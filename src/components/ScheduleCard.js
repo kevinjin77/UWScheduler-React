@@ -14,6 +14,7 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
+import Divider from '@material-ui/core/Divider';
 import Dialog from '@material-ui/core/Dialog';
 import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
@@ -106,6 +107,7 @@ class ScheduleCard extends Component {
         <div style={styles.chart}>
           <RadarChart data={this.props.chartData} options={this.props.chartOptions}/>
         </div>
+        <Divider variant="middle" />
         <CardContent style={styles.cardContent}>
           <Table size="small">
             <TableHead>
