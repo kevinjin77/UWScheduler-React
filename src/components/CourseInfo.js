@@ -51,14 +51,14 @@ class CourseInfo extends Component {
             style={styles.leftRadio}
             checked={this.state.mode === 'manual'}
             value="manual"
-            control={<Radio color="primary" />}
+            control={<Radio />}
             label="Manual Entry"
             labelPlacement="end"
           />
           <FormControlLabel
             checked={this.state.mode === 'quest'}
             value="quest"
-            control={<Radio color="primary" />}
+            control={<Radio />}
             label="Import From Quest"
             labelPlacement="end"
           />
@@ -77,7 +77,10 @@ class CourseInfo extends Component {
           </form> :
           <div>
             <p style={styles.instructions}>
-              1. <a href="https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG" target="_blank">Sign in to Quest</a> and click <b>Enroll</b>. <br/><br/>
+              1. <a 
+              href="https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG"
+              target="_blank" 
+              rel="noopener noreferrer">Sign in to Quest</a> and click <b>Enroll</b>. <br/><br/>
               2. Click the <b>My Class Schedule</b> tab. <br/><br/>
               3. Select all and copy. (List View) <br/><br/>
               4. Paste into the box below! <br/><br/>

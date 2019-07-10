@@ -144,6 +144,10 @@ const styles = {
   rightIcon: {
     fontSize: '1rem',
     marginLeft: '4px'
+  },
+  dialogTitle: {
+    color: 'white',
+    background: '#24292e'
   }
 };
 
@@ -219,7 +223,12 @@ class ScheduleCard extends Component {
             onClose={this.handleClose}
             aria-labelledby="max-width-dialog-title"
           >
-            <DialogTitle id="max-width-dialog-title">Your Schedule</DialogTitle>
+            <DialogTitle
+              id="max-width-dialog-title"
+              style={styles.dialogTitle}
+            >
+              Your Schedule
+            </DialogTitle>
             <DialogContent>
               <Table>
                 <TableHead>
