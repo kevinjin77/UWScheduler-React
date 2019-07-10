@@ -181,7 +181,7 @@ class ScheduleCard extends Component {
           title={<Typography style={styles.cardTitle}>Overall Rating: 67</Typography>}
         />
         <div style={styles.chart}>
-          <RadarChart data={this.props.chartData} options={this.props.chartOptions}/>
+          <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
         </div>
         <Divider variant="middle" />
         <CardContent style={styles.cardContent}>

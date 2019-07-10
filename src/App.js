@@ -18,7 +18,7 @@ const styles = {
   }
 }
 
-var chartData = {
+const chartData = {
   labels: ['Gap', 'Lunch', 'Professor'],
   datasets: [{
     label: 'Rating',
@@ -30,12 +30,6 @@ var chartData = {
     pointHighlightStroke: "rgba(220,220,220,1)",
     data: [20, 10, 4]
   }]
-}
-
-var chartOptions = {
-  legend: {
-    display: false
-  }
 }
 
 function App() {
@@ -72,19 +66,19 @@ function App() {
       <div className='schedules'>
         <Grid style={{margin: 0}} container justify="center" spacing={2}>
           <Grid item>
-            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+            <ScheduleCard chartData={chartData} />
           </Grid>
           <Grid item>
-            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+            <ScheduleCard chartData={chartData} />
           </Grid>
           <Grid item>
-            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+            <ScheduleCard chartData={chartData} />
           </Grid>
           <Grid item>
-            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+            <ScheduleCard chartData={chartData} />
           </Grid>
           <Grid item>
-            <ScheduleCard chartData={chartData} chartOptions={chartOptions} />
+            <ScheduleCard chartData={chartData} />
           </Grid>
         </Grid>
       </div>
