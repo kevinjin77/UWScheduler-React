@@ -4,7 +4,6 @@ import Card from '@material-ui/core/Card';
 import CardHeader from '@material-ui/core/CardHeader';
 import CardContent from '@material-ui/core/CardContent';
 import CardActions from '@material-ui/core/CardActions';
-import Avatar from '@material-ui/core/Avatar';
 import IconButton from '@material-ui/core/IconButton';
 import CallMadeIcon from '@material-ui/icons/CallMade';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
@@ -127,7 +126,12 @@ const styles = {
   chart: {
     display: 'flex',
     alignItems: 'center',
-    justifyContent: 'center'
+    justifyContent: 'center',
+    paddingTop: '20px'
+  },
+  cardHeader: {
+    background: '#24292e',
+    color: 'white'
   },
   cardTitle: {
     fontWeight: 500,
@@ -138,12 +142,15 @@ const styles = {
     paddingBottom: '5px'
   },
   cardActions: {
+    background: '#24292e',
+    color: 'white',
     display: 'flex',
     justifyContent: 'flex-end'
   },
   rightIcon: {
     fontSize: '1rem',
-    marginLeft: '4px'
+    marginLeft: '4px',
+    color: 'white'
   },
   dialogTitle: {
     color: 'white',
@@ -172,13 +179,8 @@ class ScheduleCard extends Component {
       <Card style={styles.card}>
         <CardHeader
           style={styles.cardHeader}
-          avatar={
-            <Avatar aria-label="Number">
-              #1
-            </Avatar>
-          }
           action={
-            <IconButton aria-label="Settings">
+            <IconButton color="secondary" aria-label="Settings">
               <MoreVertIcon />
             </IconButton>
           }
@@ -211,7 +213,7 @@ class ScheduleCard extends Component {
           </Table>
         </CardContent>
         <CardActions disableSpacing style={styles.cardActions}>
-          <Button size="small" onClick={this.handleOpen}>
+          <Button  variant="contained" color="primary" size="small" onClick={this.handleOpen}>
             Detailed View
             <CallMadeIcon style={styles.rightIcon} />
           </Button>

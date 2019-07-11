@@ -27,11 +27,12 @@ function GithubIcon(props) {
 const theme = createMuiTheme({
   palette: {
     primary: {
-      main: '#24292e'
+      main: '#24292e',
+      contrastText: '#fff',
     },
     secondary: {
       main: '#fdd835',
-    },
+    }
   },
 });
 
