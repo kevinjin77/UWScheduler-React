@@ -131,7 +131,8 @@ const styles = {
   },
   cardHeader: {
     background: '#24292e',
-    color: 'white'
+    color: 'white',
+    padding: '8px 16px'
   },
   cardTitle: {
     fontWeight: 500,
