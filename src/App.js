@@ -32,7 +32,9 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: '#fdd835',
-    }
+    },
+    contrastThreshold: 3,
+    tonalOffset: 0.5,
   },
 });
 
@@ -85,13 +87,13 @@ function App() {
         </AppBar>
         <Grid container spacing={0} className='inputForm'>
           <Grid item xs={6}>
-            <Paper className='courses'>
+            <Paper square className='courses'>
               <h2>Course Information</h2>
               <CourseInfo />
             </Paper>
           </Grid>
           <Grid item xs={6}>
-            <Paper className='preferences'>
+            <Paper square className='preferences'>
             <h2>Preferences</h2>
             </Paper>
           </Grid>

@@ -6,7 +6,7 @@
 }
 
 .submitSection {
-  height: 8vh;
+  height: 9vh;
   width: 100%;
   display: flex;
   align-items: center;
@@ -38,4 +38,8 @@
 
 .MuiCardHeader-action {
   margin-top: 0 !important;
+}
+
+.fc-content {
+  font-size: 12px
 }

@@ -7,11 +7,6 @@ import CardActions from '@material-ui/core/CardActions';
 import IconButton from '@material-ui/core/IconButton';
 import CallMadeIcon from '@material-ui/icons/CallMade';
 import MoreVertIcon from '@material-ui/icons/MoreVert';
-import Table from '@material-ui/core/Table';
-import TableBody from '@material-ui/core/TableBody';
-import TableCell from '@material-ui/core/TableCell';
-import TableHead from '@material-ui/core/TableHead';
-import TableRow from '@material-ui/core/TableRow';
 import Button from '@material-ui/core/Button';
 import Divider from '@material-ui/core/Divider';
 import Dialog from '@material-ui/core/Dialog';
@@ -19,11 +14,15 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
+import Paper from '@material-ui/core/Paper';
+import Typography from '@material-ui/core/Typography';
+import Grid from '@material-ui/core/Grid';
 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
+import CourseTable from './CouseTable'
 import '../main.scss'
-import { Typography } from '@material-ui/core';
+
 
 var RadarChart = require("react-chartjs").Radar;
 
@@ -134,6 +133,11 @@ const styles = {
     color: 'white',
     padding: '8px 16px'
   },
+  cardHeaderDialog: {
+    background: '#24292e',
+    color: 'white',
+    padding: '16px 16px'
+  },
   cardTitle: {
     fontWeight: 500,
     fontSize: '1rem'
@@ -156,6 +160,9 @@ const styles = {
   dialogTitle: {
     color: 'white',
     background: '#24292e'
+  },
+  paper: {
+    padding: '16px'
   }
 };
 
@@ -192,29 +199,10 @@ class ScheduleCard extends Component {
         </div>
         <Divider variant="middle" />
         <CardContent style={styles.cardContent}>
-          <Table size="small">
-            <TableHead>
-              <TableRow>
-                <TableCell>Course</TableCell>
-                <TableCell>Time</TableCell>
-                <TableCell>Instructor</TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {rows.map(row => (
-                <TableRow key={row.course}>
-                  <TableCell component="th" scope="row">
-                    {row.course}
-                  </TableCell>
-                  <TableCell>{row.time}</TableCell>
-                  <TableCell>{row.instructor}</TableCell>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
+          <CourseTable data={rows} dense />
         </CardContent>
         <CardActions disableSpacing style={styles.cardActions}>
-          <Button  variant="contained" color="primary" size="small" onClick={this.handleOpen}>
+          <Button variant="contained" color="primary" size="small" onClick={this.handleOpen}>
             Detailed View
             <CallMadeIcon style={styles.rightIcon} />
           </Button>
@@ -233,48 +221,64 @@ class ScheduleCard extends Component {
               Your Schedule
             </DialogTitle>
             <DialogContent>
-              <Table>
-                <TableHead>
-                  <TableRow>
-                    <TableCell>Course</TableCell>
-                    <TableCell>Section</TableCell>
-                    <TableCell>Enrolled</TableCell>
-                    <TableCell>Time</TableCell>
-                    <TableCell>Location</TableCell>
-                    <TableCell>Instructor</TableCell>
-                    <TableCell>Instructor Rating</TableCell>
-                  </TableRow>
-                </TableHead>
-                <TableBody>
-                  {rows.map(row => (
-                    <TableRow key={row.course}>
-                      <TableCell component="th" scope="row">
-                        {row.course}
-                      </TableCell>
-                      <TableCell>{row.section}</TableCell>
-                      <TableCell>{row.enrolled}</TableCell>
-                      <TableCell>{row.time}</TableCell>
-                      <TableCell>{row.location}</TableCell>
-                      <TableCell>{row.instructor}</TableCell>
-                      <TableCell>{row.rating}</TableCell>
-                    </TableRow>
-                  ))}
-                </TableBody>
-              </Table>
-              <FullCalendar
-                defaultView="timeGridWeek"
-                plugins={[ timeGridPlugin ]}
-                weekends={false}
-                allDaySlot={false}
-                minTime='8:00:00'
-                maxTime='18:00:00'
-                contentHeight='auto'
-                header={false}
-                columnHeaderFormat={{ weekday: 'short' }}
-                aspectRatio={1}
-                defaultDate={'2018-02-12'}
-                events={events}
-                />
+              <Grid style={{margin: 0}} container justify="center" spacing={2}>
+                <Grid item xs={12}>
+                  <Card elevation={3}>
+                    <CardHeader
+                      style={styles.cardHeaderDialog}
+                      title={<Typography variant="h6">Time Table</Typography>}
+                    />
+                    <CardContent>
+                      <CourseTable data={rows} />
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={9}>
+                  <Card elevation={3}>
+                    <CardHeader
+                      style={styles.cardHeaderDialog}
+                      title={<Typography variant="h6">Calendar</Typography>}
+                    />
+                    <CardContent>
+                      <FullCalendar
+                        defaultView="timeGridWeek"
+                        plugins={[ timeGridPlugin ]}
+                        weekends={false}
+                        allDaySlot={false}
+                        minTime='8:00:00'
+                        maxTime='18:00:00'
+                        contentHeight='auto'
+                        header={false}
+                        columnHeaderFormat={{ weekday: 'short' }}
+                        aspectRatio={1}
+                        defaultDate={'2018-02-12'}
+                        events={events}
+                        />
+                    </CardContent>
+                  </Card>
+                </Grid>
+                <Grid item xs={3}>
+                  <Card elevation={3}>
+                    <CardHeader
+                      style={styles.cardHeaderDialog}
+                      title={<Typography variant="h6">test</Typography>}
+                    />
+                    <CardContent>
+                      <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
+                    </CardContent>
+                  </Card>
+                  <br />
+                  <Card elevation={3}>
+                    <CardHeader
+                      style={styles.cardHeaderDialog}
+                      title={<Typography variant="h6">test</Typography>}
+                    />
+                    <CardContent>
+                      <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
+                    </CardContent>
+                  </Card>
+                </Grid>
+              </Grid>
             </DialogContent>
             <DialogActions>
               <Button onClick={this.handleClose} color="primary">
