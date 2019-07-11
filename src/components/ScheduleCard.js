@@ -14,7 +14,6 @@ import DialogActions from '@material-ui/core/DialogActions';
 import DialogContent from '@material-ui/core/DialogContent';
 import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
-import Paper from '@material-ui/core/Paper';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 
@@ -119,6 +118,12 @@ const events = [
 ]
 
 const styles = {
+  center: {
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
+    width: '100%'
+  },
   card: {
     maxWidth: 445,
   },
@@ -158,8 +163,7 @@ const styles = {
     color: 'white'
   },
   dialogTitle: {
-    color: 'white',
-    background: '#24292e'
+    background: '#fdd835'
   },
   paper: {
     padding: '16px'
@@ -261,20 +265,31 @@ class ScheduleCard extends Component {
                   <Card elevation={3}>
                     <CardHeader
                       style={styles.cardHeaderDialog}
-                      title={<Typography variant="h6">test</Typography>}
+                      title={<Typography variant="h6">Overall Rating: 67</Typography>}
                     />
                     <CardContent>
-                      <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
+                      <div style={styles.chart}>
+                        <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
+                      </div>
                     </CardContent>
                   </Card>
                   <br />
                   <Card elevation={3}>
                     <CardHeader
                       style={styles.cardHeaderDialog}
-                      title={<Typography variant="h6">test</Typography>}
+                      title={<Typography variant="h6">Actions</Typography>}
                     />
-                    <CardContent>
-                      <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
+                    <CardContent style={{paddingTop: 0}}>
+                      <p style={{fontSize: '14px'}}>Export Schedule to:</p>
+                      <div style={{...styles.center, flexDirection: 'column'}}>
+                        <Button variant="contained" color="primary">
+                        UWFlow
+                        </Button>
+                        <br/>
+                        <Button variant="contained" color="primary">
+                          Google Calendar
+                        </Button>
+                      </div>
                     </CardContent>
                   </Card>
                 </Grid>

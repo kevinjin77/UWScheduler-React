@@ -13,6 +13,7 @@ import EventIcon from '@material-ui/icons/Event';
 import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import Slider from '@material-ui/core/Slider';
 import { createMuiTheme } from '@material-ui/core/styles';
 import { ThemeProvider } from '@material-ui/styles';
 
@@ -32,6 +33,7 @@ const theme = createMuiTheme({
     },
     secondary: {
       main: '#fdd835',
+      // main: '#8bc34a',
     },
     contrastThreshold: 3,
     tonalOffset: 0.5,
@@ -48,8 +50,23 @@ const styles = {
   eventIcon: {
     color: 'white',
     paddingRight: '10px'
+  },
+  slider: {
+    padding: '30px 0'
   }
 }
+
+const marks = [
+  {
+    value: 0,
+    label: 'Not Important',
+  },
+  {
+    value: 10,
+    label: 'Very Important',
+  }
+];
+
 
 const chartData = {
   labels: ['Gap', 'Lunch', 'Professor'],
@@ -86,15 +103,67 @@ function App() {
           </Toolbar>
         </AppBar>
         <Grid container spacing={0} className='inputForm'>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Paper square className='courses'>
               <h2>Course Information</h2>
               <CourseInfo />
             </Paper>
           </Grid>
-          <Grid item xs={6}>
+          <Grid item xs={12} md={6}>
             <Paper square className='preferences'>
             <h2>Preferences</h2>
+            <Typography gutterBottom>
+              Rate each of the following factors from 0 (not important) to 10 (very important).
+            </Typography>
+            <br />
+            <Typography variant="h6" component="h2">
+              Professor
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              I want the best professors.
+            </Typography>
+            <Slider
+              style={styles.slider}
+              defaultValue={5}
+              aria-labelledby="discrete-slider"
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={0}
+              max={10}
+            />
+            <Typography variant="h6" component="h2">
+              Gap
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              I want as few 70 minute gaps between classes as possible.
+            </Typography>
+            <Slider
+              style={styles.slider}
+              defaultValue={5}
+              aria-labelledby="discrete-slider"
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={0}
+              max={10}
+            />
+            <Typography variant="h6" component="h2">
+              Lunch
+            </Typography>
+            <Typography variant="body2" color="textSecondary" component="p">
+              I want to have as much time as possible for lunch.
+            </Typography>
+            <Slider
+              style={styles.slider}
+              defaultValue={5}
+              aria-labelledby="discrete-slider"
+              valueLabelDisplay="auto"
+              step={1}
+              marks
+              min={0}
+              max={10}
+            />
             </Paper>
           </Grid>
         </Grid>

@@ -43,7 +43,7 @@ class CourseInfo extends Component {
   };
 
   render() {
-    const { form: {term, numCourses} } = this.state;
+    const { form: {term} } = this.state;
     return (
       <div>
         <RadioGroup aria-label="position" name="position" value={this.state.mode} onChange={this.handleMode} row>
@@ -98,7 +98,6 @@ class CourseInfo extends Component {
             />
           </div>
         }
-        
       </div>
     );
   }
