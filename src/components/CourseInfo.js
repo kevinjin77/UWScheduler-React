@@ -87,6 +87,7 @@ class CourseInfo extends Component {
               5. Click the "Generate Schedules" button below. <br/>
             </p>
             <TextField
+              ref="questInput"
               id="quest-input"
               label="Paste Here!"
               margin="normal"
