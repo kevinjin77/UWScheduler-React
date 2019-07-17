@@ -19,7 +19,7 @@ import Grid from '@material-ui/core/Grid';
 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
-import CourseTable from './CouseTable'
+import CourseTable from './CourseTable'
 import '../main.scss'
 
 

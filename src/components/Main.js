@@ -14,6 +14,7 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
+import CircularProgress from '@material-ui/core/CircularProgress';
 
 const styles = {
   root: {
@@ -64,7 +65,16 @@ function getTermFromQuest(scheduleString) {
 }
 
 class Main extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+        loading: false,
+        schedules: []
+    };
+  }
+
   handleSubmit = () => {
+    this.setState({loading: true})
     let scheduleString = document.getElementById('quest-input').value;
     // let schedules = generateSchedules(scheduleString)
     // this.setState({
@@ -159,9 +169,12 @@ class Main extends Component {
             </Grid>
           </Grid>
           <div className='submitSection'>
-            <Button onClick={this.handleSubmit} variant="contained" color="primary">
-              Generate Schedules
-            </Button>
+            {
+              this.state.loading ? <CircularProgress />
+              : <Button onClick={this.handleSubmit} variant="contained" color="primary">
+                Generate Schedules
+              </Button>
+            }
           </div>
         </div>
         <div className='schedules'>

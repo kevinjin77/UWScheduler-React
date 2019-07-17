@@ -146,10 +146,11 @@ export default function IntegrationAutosuggest() {
   };
 
   const handleDelete = (idx) => {
-    console.log(idx)
+    let newCourses = state.courses
+    newCourses.splice(idx, 1)
     setState({
       single: '',
-      courses: state.courses.splice(idx)
+      courses: newCourses
     })
   }
 
@@ -196,7 +197,7 @@ export default function IntegrationAutosuggest() {
                 primary={course}
               />
               <ListItemSecondaryAction>
-                <IconButton onClick={handleDelete} edge="end" aria-label="Delete">
+                <IconButton onClick={() => handleDelete(idx)} edge="end" aria-label="Delete">
                   <DeleteIcon />
                 </IconButton>
               </ListItemSecondaryAction>
