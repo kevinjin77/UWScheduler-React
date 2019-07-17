@@ -1,7 +1,9 @@
 import React, { Component } from 'react';
+import axios from 'axios';
 import '../App.css';
 
 import CourseInfo from './CourseInfo'
+import ScheduleList from './ScheduleList'
 import ScheduleCard from './ScheduleCard'
 
 import Button from '@material-ui/core/Button';
@@ -15,6 +17,10 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
 import CircularProgress from '@material-ui/core/CircularProgress';
+import Snackbar from '@material-ui/core/Snackbar';
+import SnackbarContent from '@material-ui/core/SnackbarContent';
+
+const uwApiKey = "a0fa5a0445627c840d18a3cf30d89995";
 
 const styles = {
   root: {
@@ -54,14 +60,40 @@ function GithubIcon(props) {
   );
 }
 
+function termToInt(termString) {
+  const [season, year] = termString.split(' ')
+  const base = (year - 2000) * 10 + 1000
+  if (season === 'Winter') {
+    return base + 1
+  } else if (season === 'Spring') {
+    return base + 5
+  } else if (season === 'Fall') {
+    return base + 9
+  }
+}
+
 function getTermFromQuest(scheduleString) {
   var lines = scheduleString.split('\n');
   for (let i = 1; i < lines.length; i++) {
     if (lines[i].includes('| Undergraduate | University of Waterloo')) {
-      console.log(lines[i].slice(0, lines[i].indexOf('|') - 1));
-      break;
+      return lines[i].slice(0, lines[i].indexOf('|') - 1);
     }
   }
+}
+
+function getCoursesFromQuest(scheduleString) {
+  let courseArr = []
+  let start = scheduleString.indexOf('Show Waitlisted Classes') + 24;
+  let end = scheduleString.indexOf('Printer Friendly Page') - 1;
+  let coursesString = scheduleString.slice(start, end);
+  var lines = coursesString.split('\n');
+  for (let i = 1; i < lines.length; i++) {
+    if (lines[i].includes('Status')) {
+      let courseString = lines[i-1].substr(0, lines[i-1].indexOf('-')-1).replace(/\s/g, '');
+      courseArr.push(courseString);
+    }
+  }
+  return courseArr;
 }
 
 class Main extends Component {
@@ -69,18 +101,62 @@ class Main extends Component {
     super(props);
     this.state = {
         loading: false,
-        schedules: []
+        schedules: [],
+        errorMsg: ''
     };
+  }
+
+  makeSchedules = (courseInfoArr) => {
+    console.log(courseInfoArr);
+  }
+
+  getInfo = (courseArr, term) => {
+    let self = this;
+    let linksArr = [];
+    courseArr.forEach(course => {
+      let firstDigit = course.search(/\d/)
+      let requestString = `https://api.uwaterloo.ca/v2/terms/${term}/${course.slice(0, firstDigit)}/${course.slice(firstDigit)}/schedule.json?key=${uwApiKey}`
+      linksArr.push(requestString)
+    })
+    
+    let courseInfoArr = []
+    axios.all(linksArr.map(link => axios.get(link)))
+      .then(axios.spread(function (...res) {
+        courseInfoArr = res.map(r => r.data);
+        courseInfoArr.forEach((courseInfo, idx) => {
+          if (courseInfo.meta.status !== 200 || courseInfo.data.length === 0) {
+            self.setState({
+              errorMsg: `${courseArr[idx]} is not being offered this term!`,
+              loading: false
+            })
+          }
+        })
+        self.makeSchedules(courseInfoArr);
+      }))
+      .catch(err => {
+        console.log(err)
+      })
+  }
+
+  generateSchedules = (scheduleString) => {
+    const term = termToInt(getTermFromQuest(scheduleString));
+    const courseArr = getCoursesFromQuest(scheduleString);
+    this.getInfo(courseArr, term);
   }
 
   handleSubmit = () => {
     this.setState({loading: true})
     let scheduleString = document.getElementById('quest-input').value;
-    // let schedules = generateSchedules(scheduleString)
-    // this.setState({
-    //   courses: schedules.courses,
-    //   term: schedules.term
-    // })
+    try {
+      this.generateSchedules(scheduleString)
+    }
+    catch(error) {
+      this.setState({loading: false, errorMsg: error})
+    }
+  }
+
+  handleClose = () => {
+    this.setState({errorMsg: ''})
   }
 
   render() {
@@ -178,6 +254,7 @@ class Main extends Component {
           </div>
         </div>
         <div className='schedules'>
+          {this.state.loading && <ScheduleList />}
           <Grid style={{margin: 0}} container justify="center" spacing={2}>
             <Grid item>
               <ScheduleCard chartData={chartData} />
@@ -196,6 +273,13 @@ class Main extends Component {
             </Grid>
           </Grid>
         </div>
+        <Snackbar
+          variant="error"
+          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+          open={this.state.errorMsg !== ''}
+          onClose={this.handleClose}
+          message={<span>{this.state.errorMsg}</span>}
+        />
       </div>
     );
   }

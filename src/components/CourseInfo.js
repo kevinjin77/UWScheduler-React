@@ -15,6 +15,142 @@ const styles = {
   }
 };
 
+const mockQuest =
+`
+GO!
+Kevin Jin
+My Academics
+Course Selection (Undergrad only)
+Search for Classes
+Enroll
+ 	My Class Schedule	 	 	|	 	 	Shopping Cart	 	 	|	 	 	Add	 	 	|	 	 	Drop	 	 	|	 	 	Swap	 	 	|	 	 	Edit	 	 	|	 	 	Term Information	 	 	|	 	 	Exam Information	 
+My Class Schedule
+List View
+Weekly Calendar View
+Select Display Option
+L
+Fall 2019 | Undergraduate | University of Waterloo
+Group Box
+Collapse section Class Schedule Filter Options Class Schedule Filter Options 
+Show Enrolled Classes
+Show Dropped Classes
+Show Waitlisted Classes
+CS 343 - Concurrent and Parallel Prog
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+6317
+101
+TST
+W 7:00PM - 8:50PM
+TBA
+Staff
+10/30/2019 - 10/30/2019
+8649
+003
+LEC
+TTh 10:00AM - 11:20AM
+PHY 313
+Caroline Kierstead
+09/04/2019 - 12/03/2019
+CS 348 - Intro to Database Management
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+6395
+101
+TST
+F 4:30PM - 6:00PM
+TBA
+Staff
+11/01/2019 - 11/01/2019
+6041
+002
+LEC
+TTh 4:00PM - 5:20PM
+E2 1732
+David Toman
+09/04/2019 - 12/03/2019
+CS 349 - User Interfaces
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+6319
+002
+LEC
+MWF 12:30PM - 1:20PM
+MC 1056
+Jeffery Avery
+09/04/2019 - 12/03/2019
+STAT 331 - Applied Linear Models
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+6569
+101
+TUT
+F 10:30AM - 11:20AM
+AHS 1689
+Leilei Zeng
+09/06/2019 - 09/06/2019
+ 
+ 	
+ 
+F 10:30AM - 11:20AM
+AHS 1689
+Leilei Zeng
+09/20/2019 - 09/20/2019
+ 
+ 	
+ 
+F 10:30AM - 11:20AM
+AHS 1689
+Leilei Zeng
+10/04/2019 - 10/04/2019
+ 
+ 	
+ 
+F 10:30AM - 11:20AM
+AHS 1689
+Leilei Zeng
+11/01/2019 - 11/01/2019
+ 
+ 	
+ 
+F 10:30AM - 11:20AM
+AHS 1689
+Leilei Zeng
+11/15/2019 - 11/15/2019
+ 
+ 	
+ 
+F 10:30AM - 11:20AM
+AHS 1689
+Leilei Zeng
+11/29/2019 - 11/29/2019
+6306
+002
+LEC
+TTh 11:30AM - 12:50PM
+STC 0010
+Leilei Zeng
+09/04/2019 - 12/03/2019
+Printer Friendly Page
+Go to top iconGo to top
+`
+
 class CourseInfo extends Component {
   constructor(props) {
     super(props);
@@ -96,6 +232,7 @@ class CourseInfo extends Component {
               multiline
               rows="12"
               rowsMax="12"
+              value={mockQuest}
             />
           </div>
         }
