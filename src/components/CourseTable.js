@@ -22,7 +22,7 @@ class CourseTable extends Component {
         </TableRow>
         </TableHead>
         <TableBody>
-        {this.props.data.map(row => (
+        {this.props.data && this.props.data.map(row => (
             <TableRow key={row.course}>
             <TableCell component="th" scope="row">{row.course}</TableCell>
             {!this.props.dense && <TableCell>{row.section}</TableCell>}

@@ -29,94 +29,6 @@ const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
 });
 
-function createData(course, time, instructor, section, enrolled, location, rating) {
-  return { course, time, instructor, section, enrolled, location, rating };
-}
-
-const rows = [
-  createData('CS343', '14:30 - 15:50 TTh', 'Buhr, Peter A', 'LEC 001', '0/80', 'MC 1056', 4.6),
-  createData('CS349', '11:30 - 12:20 MWF', 'Avery, Jeffery', 'LEC 003', '0/180', 'MC 1056', 2.6),
-  createData('CS348', '11:30 - 12:20 MWF', 'Avery, Jeffery', 'LEC 004', '0/90', 'MC 1056', 3.0),
-  createData('CS350', '11:30 - 12:20 MWF', 'Avery, Jeffery', 'LEC 002', '0/80', 'MC 1056', 4.3),
-  createData('CS331', '11:30 - 12:20 MWF', 'Avery, Jeffery', 'LEC 002', '0/120', 'MC 1056', 4.4)
-];
-
-
-const events = [
-  {
-    "title": "CS350 - LEC 002",
-    "start": "2018-02-13T13:00",
-    "end": "2018-02-13T14:20",
-    "color": false
-  },
-  {
-    "title": "CS350 - LEC 002",
-    "start": "2018-02-15T13:00",
-    "end": "2018-02-15T14:20",
-    "color": false
-  },
-  {
-    "title": "CS343 - LEC 001",
-    "start": "2018-02-13T11:30",
-    "end": "2018-02-13T12:50",
-    "color": false
-  },
-  {
-    "title": "CS343 - LEC 001",
-    "start": "2018-02-15T11:30",
-    "end": "2018-02-15T12:50",
-    "color": false
-  },
-  {
-    "title": "STAT331 - LEC 001",
-    "start": "2018-02-13T14:30",
-    "end": "2018-02-13T15:50",
-    "color": false
-  },
-  {
-    "title": "STAT331 - LEC 001",
-    "start": "2018-02-15T14:30",
-    "end": "2018-02-15T15:50",
-    "color": false
-  },
-  {
-    "title": "STAT331 - TUT 101",
-    "start": "2018-02-16T10:30",
-    "end": "2018-02-16T11:20",
-    "color": "green"
-  },
-  {
-    "title": "CS348 - LEC 001",
-    "start": "2018-02-13T10:00",
-    "end": "2018-02-13T11:20",
-    "color": false
-  },
-  {
-    "title": "CS348 - LEC 001",
-    "start": "2018-02-15T10:00",
-    "end": "2018-02-15T11:20",
-    "color": false
-  },
-  {
-    "title": "CS349 - LEC 001",
-    "start": "2018-02-12T11:30",
-    "end": "2018-02-12T12:20",
-    "color": false
-  },
-  {
-    "title": "CS349 - LEC 001",
-    "start": "2018-02-14T11:30",
-    "end": "2018-02-14T12:20",
-    "color": false
-  },
-  {
-    "title": "CS349 - LEC 001",
-    "start": "2018-02-16T11:30",
-    "end": "2018-02-16T12:20",
-    "color": false
-  }
-]
-
 const styles = {
   center: {
     display: 'flex',
@@ -170,6 +82,95 @@ const styles = {
   }
 };
 
+// const chartData = {
+//   labels: ['Gap', 'Lunch', 'Professor'],
+//   datasets: [{
+//     label: 'Rating',
+//     fillColor: "rgba(0,220,220,0.2)",
+//     strokeColor: "rgba(0,220,220,1)",
+//     pointColor: "rgba(0,220,220,1)",
+//     pointStrokeColor: "#fff",
+//     pointHighlightFill: "#fff",
+//     pointHighlightStroke: "rgba(220,220,220,1)",
+//     data: [20, 10, 4]
+//   }]
+// }
+
+function processDate(weekdays) {
+  var index = 0;
+  var dayList = [];
+  if (weekdays === null) {
+    return dayList;
+  }
+  if (index < weekdays.length && weekdays[index] === 'M') {
+    dayList.push("M")
+    index++
+  }
+  if (index < weekdays.length && weekdays[index] === 'T' && (index + 1 === weekdays.length ? true : weekdays[index + 1] !== 'h')) {
+    dayList.push("T")
+    index++;
+  }
+  if (index < weekdays.length && weekdays[index] === 'W') {
+    dayList.push("W")
+    index++;
+  }
+  if ((index + 1) < weekdays.length && weekdays[index] === 'T' && (index + 1 === weekdays.length ? true : weekdays[index + 1] === 'h')) {
+    dayList.push("Th")
+    index += 2;
+  }
+  if (index < weekdays.length && weekdays[index] === 'F') {
+    dayList.push("F")
+    index++;
+  }
+  return dayList;
+}
+
+function getRows(schedule) {
+  let lecs = schedule.filter(course => course.section.includes('LEC'))
+  return lecs.map(course => {
+    return {
+      'course': `${course.subject}${course.catalog_number}`,
+      'time': `${course.classes[0].date.start_time} - ${course.classes[0].date.end_time} ${course.classes[0].date.weekdays}`,
+      'instructor': `${course.classes[0].instructors[0].replace(/,/g, ', ')}`,
+      'section': `${course.section}`,
+      'enrolled': `${course.enrollment_total}/${course.enrollment_capacity}`,
+      'location': `${course.classes[0].location.building} ${course.classes[0].location.room}`,
+      'rating': 0,
+    }
+  })
+}
+
+function getEvents(schedule) {
+  let events = []
+  schedule.forEach(course => {
+    let weekdays = processDate(course.classes[0].date.weekdays);
+    weekdays.forEach(day => {
+      let date
+      if (day === 'M') {
+        date = 2
+      } else if (day == 'T') {
+        date = 3
+      } else if (day == 'W') {
+        date = 4
+      } else if (day == 'Th') {
+        date = 5
+      } else if (day == 'F') {
+        date = 6
+      }
+      events.push(
+        {
+          'title': `${course.subject}${course.catalog_number} - ${course.section}`,
+          'start': `2018-02-1${date}T${course.classes[0].date.start_time}`,
+          'end': `2018-02-1${date}T${course.classes[0].date.end_time}`,
+          'color': `${course.section.includes('LEC') ? '#2196f3' : '#4caf50'}`
+        }
+      )
+    })
+  })
+
+  return events
+}
+
 class ScheduleCard extends Component {
   constructor(props) {
     super(props);
@@ -203,7 +204,7 @@ class ScheduleCard extends Component {
         </div>
         <Divider variant="middle" />
         <CardContent style={styles.cardContent}>
-          <CourseTable data={rows} dense />
+          <CourseTable data={this.props.schedule && getRows(this.props.schedule)} dense />
         </CardContent>
         <CardActions disableSpacing style={styles.cardActions}>
           <Button variant="contained" color="primary" size="small" onClick={this.handleOpen}>
@@ -233,7 +234,7 @@ class ScheduleCard extends Component {
                       title={<Typography variant="h6">Time Table</Typography>}
                     />
                     <CardContent>
-                      <CourseTable data={rows} />
+                      <CourseTable data={this.props.schedule && getRows(this.props.schedule)} />
                     </CardContent>
                   </Card>
                 </Grid>
@@ -256,7 +257,7 @@ class ScheduleCard extends Component {
                         columnHeaderFormat={{ weekday: 'short' }}
                         aspectRatio={1}
                         defaultDate={'2018-02-12'}
-                        events={events}
+                        events={this.props.schedule && getEvents(this.props.schedule)}
                         />
                     </CardContent>
                   </Card>

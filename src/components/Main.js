@@ -72,6 +72,16 @@ function termToInt(termString) {
   }
 }
 
+function cartesianProduct(arr) {
+  return arr.reduce(function(a,b){
+    return a.map(function(x){
+      return b.map(function(y){
+        return x.concat(y);
+      })
+    }).reduce(function(a,b){ return a.concat(b) },[])
+  }, [[]])
+}
+
 function getTermFromQuest(scheduleString) {
   var lines = scheduleString.split('\n');
   for (let i = 1; i < lines.length; i++) {
@@ -96,6 +106,59 @@ function getCoursesFromQuest(scheduleString) {
   return courseArr;
 }
 
+function processDate(weekdays) {
+  var index = 0;
+  var dayList = [];
+  if (weekdays === null) {
+    return dayList;
+  }
+  if (index < weekdays.length && weekdays[index] === 'M') {
+    dayList.push("M")
+    index++
+  }
+  if (index < weekdays.length && weekdays[index] === 'T' && (index + 1 === weekdays.length ? true : weekdays[index + 1] !== 'h')) {
+    dayList.push("T")
+    index++;
+  }
+  if (index < weekdays.length && weekdays[index] === 'W') {
+    dayList.push("W")
+    index++;
+  }
+  if ((index + 1) < weekdays.length && weekdays[index] === 'T' && (index + 1 === weekdays.length ? true : weekdays[index + 1] === 'h')) {
+    dayList.push("Th")
+    index += 2;
+  }
+  if (index < weekdays.length && weekdays[index] === 'F') {
+    dayList.push("F")
+    index++;
+  }
+  return dayList;
+}
+
+function isTimeConflict(start1, end1, start2, end2) {
+  return ((start1.getTime() <= end2.getTime()) && (end1.getTime() >= start2.getTime()))
+}
+
+function isValidSchedule(schedule) {
+  let times = schedule.map(course => {
+    return {
+      'start_time': new Date(`1/1/2000 ${course.classes[0].date.start_time}`),
+      'end_time': new Date(`1/1/2000 ${course.classes[0].date.end_time}`),
+      'weekdays': processDate(course.classes[0].date.weekdays),
+    }
+  })
+
+  for (let i = 0; i < times.length - 1; ++i) {
+    for (let j = i+1; j < times.length; ++j) {
+      let commonDays = times[i].weekdays.filter(value => times[j].weekdays.includes(value))
+      if (commonDays.length === 0) continue;
+      if (isTimeConflict(times[i].start_time, times[i].end_time, times[j].start_time, times[j].end_time)) return false;
+    }
+  }
+
+  return true;
+}
+
 class Main extends Component {
   constructor(props) {
     super(props);
@@ -107,7 +170,15 @@ class Main extends Component {
   }
 
   makeSchedules = (courseInfoArr) => {
-    console.log(courseInfoArr);
+    console.log(courseInfoArr)
+    let courses = []
+    courseInfoArr.forEach(course => {
+      courses.push(course.filter(classe => classe.section.includes('LEC')))
+      courses.push(course.filter(classe => classe.section.includes('TUT')))
+    })
+    courses = courses.filter(course => course.length > 0)
+    let schedules = cartesianProduct(courses).filter(schedule => isValidSchedule(schedule))
+    this.setState({schedules: schedules})
   }
 
   getInfo = (courseArr, term) => {
@@ -131,7 +202,7 @@ class Main extends Component {
             })
           }
         })
-        self.makeSchedules(courseInfoArr);
+        self.makeSchedules(courseInfoArr.map(course => course.data));
       }))
       .catch(err => {
         console.log(err)
@@ -253,26 +324,19 @@ class Main extends Component {
             }
           </div>
         </div>
-        <div className='schedules'>
-          {this.state.loading && <ScheduleList />}
-          <Grid style={{margin: 0}} container justify="center" spacing={2}>
-            <Grid item>
-              <ScheduleCard chartData={chartData} />
+        {this.state.schedules.length > 0 && 
+          <div className='schedules'>
+            <Grid style={{margin: 0}} container justify="center" spacing={2}>
+              {this.state.schedules.map(schedule => {
+                return (
+                  <Grid item>
+                    <ScheduleCard schedule={schedule} chartData={chartData} />
+                  </Grid>
+                )
+              })}
             </Grid>
-            <Grid item>
-              <ScheduleCard chartData={chartData} />
-            </Grid>
-            <Grid item>
-              <ScheduleCard chartData={chartData} />
-            </Grid>
-            <Grid item>
-              <ScheduleCard chartData={chartData} />
-            </Grid>
-            <Grid item>
-              <ScheduleCard chartData={chartData} />
-            </Grid>
-          </Grid>
-        </div>
+          </div>
+        }
         <Snackbar
           variant="error"
           anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
