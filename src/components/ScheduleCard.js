@@ -148,13 +148,13 @@ function getEvents(schedule) {
       let date
       if (day === 'M') {
         date = 2
-      } else if (day == 'T') {
+      } else if (day === 'T') {
         date = 3
-      } else if (day == 'W') {
+      } else if (day === 'W') {
         date = 4
-      } else if (day == 'Th') {
+      } else if (day === 'Th') {
         date = 5
-      } else if (day == 'F') {
+      } else if (day === 'F') {
         date = 6
       }
       events.push(

@@ -178,7 +178,10 @@ class Main extends Component {
     })
     courses = courses.filter(course => course.length > 0)
     let schedules = cartesianProduct(courses).filter(schedule => isValidSchedule(schedule))
-    this.setState({schedules: schedules})
+    this.setState({
+      schedules: schedules,
+      loading: false
+    })
   }
 
   getInfo = (courseArr, term) => {
