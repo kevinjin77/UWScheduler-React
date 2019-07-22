@@ -125,17 +125,29 @@ function processDate(weekdays) {
   return dayList;
 }
 
-function getRows(schedule) {
+function convertProf(prof) {
+  if (!prof) return [false, false];
+  let commaIndex = prof.indexOf(',')
+  let spaceIndex = prof.indexOf(' ')
+  let lName = prof.substring(0, commaIndex)
+  let fName = spaceIndex === -1 ? prof.substring(commaIndex + 1) : prof.substring(commaIndex + 1, spaceIndex)
+  return [fName, lName]
+}
+
+function getRows(schedule, instructors) {
   let lecs = schedule.filter(course => course.section.includes('LEC'))
   return lecs.map(course => {
+    let prof = course.classes[0].instructors[0]
+    let [fName, lName] = convertProf(prof)
     return {
       'course': `${course.subject}${course.catalog_number}`,
       'time': `${course.classes[0].date.start_time} - ${course.classes[0].date.end_time} ${course.classes[0].date.weekdays}`,
-      'instructor': `${course.classes[0].instructors[0].replace(/,/g, ', ')}`,
+      'instructor': `${course.classes[0].instructors[0] && course.classes[0].instructors[0].replace(/,/g, ', ')}`,
       'section': `${course.section}`,
       'enrolled': `${course.enrollment_total}/${course.enrollment_capacity}`,
       'location': `${course.classes[0].location.building} ${course.classes[0].location.room}`,
-      'rating': 0,
+      'rating': `${instructors[`${fName} ${lName}`] ? instructors[`${fName} ${lName}`] : -1}`,
+      'link': `http://www.ratemyprofessors.com/search.jsp?query=${fName}+${lName}`
     }
   })
 }
@@ -171,6 +183,12 @@ function getEvents(schedule) {
   return events
 }
 
+function getMaxTime(schedule) {
+  let maxTime = schedule.map(course => new Date(`1/1/2016 ${course.classes[0].date.end_time}`))
+    .sort(function(a,b){return b.getTime() - a.getTime()})[0];
+  return `${maxTime.getHours() + 1}:00:00`
+}
+
 class ScheduleCard extends Component {
   constructor(props) {
     super(props);
@@ -197,14 +215,14 @@ class ScheduleCard extends Component {
               <MoreVertIcon />
             </IconButton>
           }
-          title={<Typography style={styles.cardTitle}>Overall Rating: 67</Typography>}
+          title={<Typography style={styles.cardTitle}>Overall Rating: {this.props.schedule.professorRating}</Typography>}
         />
         <div style={styles.chart}>
           <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
         </div>
         <Divider variant="middle" />
         <CardContent style={styles.cardContent}>
-          <CourseTable data={this.props.schedule && getRows(this.props.schedule)} dense />
+          <CourseTable data={this.props.schedule && getRows(this.props.schedule, this.props.instructors)} dense />
         </CardContent>
         <CardActions disableSpacing style={styles.cardActions}>
           <Button variant="contained" color="primary" size="small" onClick={this.handleOpen}>
@@ -234,7 +252,7 @@ class ScheduleCard extends Component {
                       title={<Typography variant="h6">Time Table</Typography>}
                     />
                     <CardContent>
-                      <CourseTable data={this.props.schedule && getRows(this.props.schedule)} />
+                      <CourseTable data={this.props.schedule && getRows(this.props.schedule, this.props.instructors)} />
                     </CardContent>
                   </Card>
                 </Grid>
@@ -251,7 +269,7 @@ class ScheduleCard extends Component {
                         weekends={false}
                         allDaySlot={false}
                         minTime='8:00:00'
-                        maxTime='18:00:00'
+                        maxTime={this.props.schedule && getMaxTime(this.props.schedule)}
                         contentHeight='auto'
                         header={false}
                         columnHeaderFormat={{ weekday: 'short' }}
@@ -266,7 +284,7 @@ class ScheduleCard extends Component {
                   <Card elevation={3}>
                     <CardHeader
                       style={styles.cardHeaderDialog}
-                      title={<Typography variant="h6">Overall Rating: 67</Typography>}
+                      title={<Typography variant="h6">Overall Rating: {this.props.schedule.professorRating}</Typography>}
                     />
                     <CardContent>
                       <div style={styles.chart}>

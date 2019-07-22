@@ -3,7 +3,6 @@ import axios from 'axios';
 import '../App.css';
 
 import CourseInfo from './CourseInfo'
-import ScheduleList from './ScheduleList'
 import ScheduleCard from './ScheduleCard'
 
 import Button from '@material-ui/core/Button';
@@ -159,18 +158,86 @@ function isValidSchedule(schedule) {
   return true;
 }
 
+function convertProf(prof) {
+  if (!prof) return [false, false];
+  let commaIndex = prof.indexOf(',')
+  let spaceIndex = prof.indexOf(' ')
+  let lName = prof.substring(0, commaIndex)
+  let fName = spaceIndex === -1 ? prof.substring(commaIndex + 1) : prof.substring(commaIndex + 1, spaceIndex)
+  return [fName, lName]
+}
+
+function calculateProfessorRating(schedule, instructorMap) {
+  let sum = 0
+  let numLecs = schedule.filter(course => course.section.includes('LEC')).length
+  schedule.forEach(course => {
+    if (course.section.includes('LEC')) {
+      let prof = course.classes[0].instructors[0]
+      if (!prof) {
+        sum += 2.5
+        return;
+      }
+      let [fName, lName] = convertProf(prof)
+      sum += instructorMap[`${fName} ${lName}`] ? instructorMap[`${fName} ${lName}`] : 2.5
+    }
+  })
+  schedule['professorRating'] = ((sum / numLecs) * 20).toFixed(2)
+}
+
+function calculateRating(schedules, instructorMap) {
+  schedules.forEach(schedule => {
+    calculateProfessorRating(schedule, instructorMap)
+    // calculateGapRating(schedule)
+    // calculateLunchRating(schedule)
+    console.log(schedule)
+  })
+}
+
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
         loading: false,
         schedules: [],
+        instructors: {},
         errorMsg: ''
     };
   }
 
+  getInstructorRatings = (courseInfoArr) => {
+    let profs = []
+    let linksArr = []
+    courseInfoArr.forEach(course => {
+      course.forEach(classe => {
+        if (classe.classes[0].instructors[0] && !profs.includes(classe.classes[0].instructors[0])) {
+          profs.push(classe.classes[0].instructors[0])
+        }
+      })
+    })
+
+    profs.forEach(prof => {
+      let [fName, lName] = convertProf(prof)
+      let requestString = `https://cors-anywhere.herokuapp.com/https://www.ratemyprofessors.com/find/professor/?&page=1&sid=1490&queryoption=TEACHER&queryBy=teacherName&query=${fName}+${lName}`
+      linksArr.push(requestString)
+    })
+
+    let instructorMap = {}
+
+    axios.all(linksArr.map(link => axios.get(link)))
+      .then(res => {
+        res = res.filter(rating => rating.data.professors.length === 1)
+        res.forEach(rating => {
+          let professor = rating.data.professors[0]
+          instructorMap[`${professor.tFname} ${professor.tLname}`] = parseFloat(professor.overall_rating)
+        })
+        this.setState({
+          instructors: instructorMap
+        })
+        this.makeSchedules(courseInfoArr)
+      })
+  }
+
   makeSchedules = (courseInfoArr) => {
-    console.log(courseInfoArr)
     let courses = []
     courseInfoArr.forEach(course => {
       courses.push(course.filter(classe => classe.section.includes('LEC')))
@@ -178,6 +245,8 @@ class Main extends Component {
     })
     courses = courses.filter(course => course.length > 0)
     let schedules = cartesianProduct(courses).filter(schedule => isValidSchedule(schedule))
+    console.log(this.state.instructors)
+    calculateRating(schedules, this.state.instructors)
     this.setState({
       schedules: schedules,
       loading: false
@@ -205,7 +274,7 @@ class Main extends Component {
             })
           }
         })
-        self.makeSchedules(courseInfoArr.map(course => course.data));
+        self.getInstructorRatings(courseInfoArr.map(course => course.data));
       }))
       .catch(err => {
         console.log(err)
@@ -333,7 +402,7 @@ class Main extends Component {
               {this.state.schedules.map(schedule => {
                 return (
                   <Grid item>
-                    <ScheduleCard schedule={schedule} chartData={chartData} />
+                    <ScheduleCard instructors={this.state.instructors} schedule={schedule} chartData={chartData} />
                   </Grid>
                 )
               })}

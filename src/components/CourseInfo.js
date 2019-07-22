@@ -17,6 +17,7 @@ const styles = {
 
 const mockQuest =
 `
+
 GO!
 Kevin Jin
 My Academics
@@ -35,7 +36,7 @@ Collapse section Class Schedule Filter Options Class Schedule Filter Options
 Show Enrolled Classes
 Show Dropped Classes
 Show Waitlisted Classes
-CS 343 - Concurrent and Parallel Prog
+MATH 135 - Concurrent and Parallel Prog
 Status	Units	Grading	Deadlines
 Enrolled
 0.50
@@ -90,6 +91,20 @@ LEC
 MWF 12:30PM - 1:20PM
 MC 1056
 Jeffery Avery
+09/04/2019 - 12/03/2019
+MUSIC 246 - Soundtracks: Music in Film
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+4406
+001
+LEC
+T 7:00PM - 9:50PM
+AL 113
+Simon Wood
 09/04/2019 - 12/03/2019
 STAT 331 - Applied Linear Models
 Status	Units	Grading	Deadlines

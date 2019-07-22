@@ -6,6 +6,18 @@ import TableCell from '@material-ui/core/TableCell';
 import TableHead from '@material-ui/core/TableHead';
 import TableRow from '@material-ui/core/TableRow';
 
+const styles = {
+  tableCell: {
+    whiteSpace: 'nowrap',
+  },
+  instructor: {
+    maxWidth: '120px',
+    whiteSpace: 'nowrap',
+    overflow: 'hidden',
+    textOverflow: 'ellipsis'
+  }
+};
+
 class CourseTable extends Component {
   render() {
     return (
@@ -24,13 +36,14 @@ class CourseTable extends Component {
         <TableBody>
         {this.props.data && this.props.data.map(row => (
             <TableRow key={row.course}>
-            <TableCell component="th" scope="row">{row.course}</TableCell>
+            <TableCell style={styles.tableCell} component="th" scope="row">{row.course}</TableCell>
             {!this.props.dense && <TableCell>{row.section}</TableCell>}
             {!this.props.dense && <TableCell>{row.enrolled}</TableCell>}
-            <TableCell>{row.time}</TableCell>
+            <TableCell style={styles.tableCell}>{row.time}</TableCell>
             {!this.props.dense && <TableCell>{row.location}</TableCell>}
-            <TableCell>{row.instructor}</TableCell>
-            {!this.props.dense && <TableCell>{row.rating}</TableCell>}
+            <TableCell style={styles.instructor}>{row.instructor}</TableCell>
+            {!this.props.dense && <TableCell>{row.rating == -1 ?
+            <a href={row.link} target="_blank" rel="noopener noreferrer">Not Found</a> : row.rating}</TableCell>}
             </TableRow>
         ))}
         </TableBody>
