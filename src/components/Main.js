@@ -37,20 +37,6 @@ const styles = {
   }
 }
 
-const chartData = {
-  labels: ['Gap', 'Lunch', 'Professor'],
-  datasets: [{
-    label: 'Rating',
-    fillColor: "rgba(0,220,220,0.2)",
-    strokeColor: "rgba(0,220,220,1)",
-    pointColor: "rgba(0,220,220,1)",
-    pointStrokeColor: "#fff",
-    pointHighlightFill: "#fff",
-    pointHighlightStroke: "rgba(220,220,220,1)",
-    data: [20, 10, 4]
-  }]
-}
-
 function GithubIcon(props) {
   return (
     <SvgIcon {...props}>
@@ -181,16 +167,93 @@ function calculateProfessorRating(schedule, instructorMap) {
       sum += instructorMap[`${fName} ${lName}`] ? instructorMap[`${fName} ${lName}`] : 2.5
     }
   })
-  schedule['professorRating'] = ((sum / numLecs) * 20).toFixed(2)
+  schedule['professorRating'] = parseFloat(((sum / numLecs) * 20).toFixed(2))
+}
+
+function getTimes(schedule) {
+  console.log(schedule)
+  let mTimes, tTimes, wTimes, thTimes, fTimes
+  mTimes = []
+  tTimes = []
+  wTimes = []
+  thTimes = []
+  fTimes = []
+  schedule.forEach(course => {
+    let days = processDate(course.classes[0].date.weekdays)
+    days.forEach(day => {
+      if (day === 'M') {
+        mTimes.push(new Date(`1/1/2000 ${course.classes[0].date.start_time}`))
+        mTimes.push(new Date(`1/1/2000 ${course.classes[0].date.end_time}`))
+      } else if (day === 'T') {
+        tTimes.push(new Date(`1/1/2000 ${course.classes[0].date.start_time}`))
+        tTimes.push(new Date(`1/1/2000 ${course.classes[0].date.end_time}`))
+      } else if (day === 'W') {
+        wTimes.push(new Date(`1/1/2000 ${course.classes[0].date.start_time}`))
+        wTimes.push(new Date(`1/1/2000 ${course.classes[0].date.end_time}`))
+      } else if (day === 'Th') {
+        thTimes.push(new Date(`1/1/2000 ${course.classes[0].date.start_time}`))
+        thTimes.push(new Date(`1/1/2000 ${course.classes[0].date.end_time}`))
+      } else if (day === 'F') {
+        fTimes.push(new Date(`1/1/2000 ${course.classes[0].date.start_time}`))
+        fTimes.push(new Date(`1/1/2000 ${course.classes[0].date.end_time}`))
+      }
+    })
+  })
+  let times = [mTimes, tTimes, wTimes, thTimes, fTimes]
+  return times.map(time => [...new Set(time)].sort())
+}
+
+function calculateGapRating(schedule) {
+  let rating = 0;
+  let times = getTimes(schedule)
+  times.forEach(time => {
+    let numTimes = time.length
+    if (numTimes <= 2) return;
+    for (let i = 1; i < numTimes - 1; i+=2) {
+      let elapsed = (time[i+1] - time[i]) / 60000
+      if (elapsed <= 10) {
+        ++rating;
+      } else if ( elapsed <= 70) {
+        --rating;
+      }
+    }
+  })
+  schedule['gapRating'] = rating * 10
+}
+
+function calculateLunchRating(schedule) {
+  let lunchRating = 0;
+  let times = getTimes(schedule)
+  times.forEach(time => {
+    let numTimes = time.length
+    if (numTimes === 0 || time[0] > new Date("1/1/2000 12:30") || times[numTimes-1] < new Date("1/1/2000 12:00")) {
+      lunchRating += 2
+      return
+    }
+    let rating = 0
+    for (let i = 1; i < times.length - 1; i+=2) {
+      if (time[i] <= new Date("1/1/2000 14:00") && time[i+1] >= new Date("1/1/2000 11:00")) {
+        let elapsed = (time[i+1] - time[i]) / 60000
+        if (elapsed <= 30) {
+          rating = Math.max(0, rating)
+        } else {
+          rating = Math.max(1, rating)
+        }
+      }
+    }
+    lunchRating += rating
+  })
+  schedule['lunchRating'] = lunchRating * 10
 }
 
 function calculateRating(schedules, instructorMap) {
   schedules.forEach(schedule => {
     calculateProfessorRating(schedule, instructorMap)
-    // calculateGapRating(schedule)
-    // calculateLunchRating(schedule)
-    console.log(schedule)
+    calculateGapRating(schedule)
+    calculateLunchRating(schedule)
+    schedule.overallRating = schedule.professorRating + (schedule.lunchRating / 5) + (schedule.gapRating / 5)
   })
+  schedules.sort((a, b) => b.overallRating - a.overallRating)
 }
 
 class Main extends Component {
@@ -199,6 +262,7 @@ class Main extends Component {
     this.state = {
         loading: false,
         schedules: [],
+        showAll: false,
         instructors: {},
         errorMsg: ''
     };
@@ -296,6 +360,10 @@ class Main extends Component {
     catch(error) {
       this.setState({loading: false, errorMsg: error})
     }
+  }
+
+  handleShowAll = () => {
+    this.setState({showAll: true})
   }
 
   handleClose = () => {
@@ -399,13 +467,18 @@ class Main extends Component {
         {this.state.schedules.length > 0 && 
           <div className='schedules'>
             <Grid style={{margin: 0}} container justify="center" spacing={2}>
-              {this.state.schedules.map(schedule => {
+              {(this.state.showAll ? this.state.schedules : this.state.schedules.slice(0, 20)).map(schedule => {
                 return (
                   <Grid item>
-                    <ScheduleCard instructors={this.state.instructors} schedule={schedule} chartData={chartData} />
+                    <ScheduleCard instructors={this.state.instructors} schedule={schedule} />
                   </Grid>
                 )
               })}
+              {!this.state.showAll && this.state.schedules.length > 20 &&
+                <Button onClick={this.handleShowAll} variant="contained" color="primary">
+                  Show All ({this.state.schedules.length - 20} More)
+                </Button>
+              }
             </Grid>
           </div>
         }

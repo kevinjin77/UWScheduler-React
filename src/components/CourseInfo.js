@@ -36,7 +36,7 @@ Collapse section Class Schedule Filter Options Class Schedule Filter Options
 Show Enrolled Classes
 Show Dropped Classes
 Show Waitlisted Classes
-MATH 135 - Concurrent and Parallel Prog
+CS 343 - Concurrent and Parallel Prog
 Status	Units	Grading	Deadlines
 Enrolled
 0.50
@@ -57,7 +57,7 @@ TTh 10:00AM - 11:20AM
 PHY 313
 Caroline Kierstead
 09/04/2019 - 12/03/2019
-CS 348 - Intro to Database Management
+CS 135 - Intro to Database Management
 Status	Units	Grading	Deadlines
 Enrolled
 0.50

@@ -82,20 +82,6 @@ const styles = {
   }
 };
 
-// const chartData = {
-//   labels: ['Gap', 'Lunch', 'Professor'],
-//   datasets: [{
-//     label: 'Rating',
-//     fillColor: "rgba(0,220,220,0.2)",
-//     strokeColor: "rgba(0,220,220,1)",
-//     pointColor: "rgba(0,220,220,1)",
-//     pointStrokeColor: "#fff",
-//     pointHighlightFill: "#fff",
-//     pointHighlightStroke: "rgba(220,220,220,1)",
-//     data: [20, 10, 4]
-//   }]
-// }
-
 function processDate(weekdays) {
   var index = 0;
   var dayList = [];
@@ -183,6 +169,35 @@ function getEvents(schedule) {
   return events
 }
 
+const options = {
+  responsive: false,
+  maintainAspectRatio: true,
+  scale: {
+    ticks: {
+      display: true,
+      beginAtZero: true,
+      min: 0,
+      max: 100
+    }
+  }
+}
+
+function getChartData(schedule) {
+  return {
+    labels: ['Gap', 'Lunch', 'Professor'],
+    datasets: [{
+      label: 'Rating',
+      fillColor: "rgba(0,220,220,0.2)",
+      strokeColor: "rgba(0,220,220,1)",
+      pointColor: "rgba(0,220,220,1)",
+      pointStrokeColor: "#fff",
+      pointHighlightFill: "#fff",
+      pointHighlightStroke: "rgba(220,220,220,1)",
+      data: [schedule.gapRating, schedule.lunchRating, schedule.professorRating]
+    }]
+  }
+}
+
 function getMaxTime(schedule) {
   let maxTime = schedule.map(course => new Date(`1/1/2016 ${course.classes[0].date.end_time}`))
     .sort(function(a,b){return b.getTime() - a.getTime()})[0];
@@ -215,10 +230,10 @@ class ScheduleCard extends Component {
               <MoreVertIcon />
             </IconButton>
           }
-          title={<Typography style={styles.cardTitle}>Overall Rating: {this.props.schedule.professorRating}</Typography>}
+          title={<Typography style={styles.cardTitle}>Overall Rating: {this.props.schedule.overallRating}</Typography>}
         />
         <div style={styles.chart}>
-          <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
+          <RadarChart data={this.props.schedule && getChartData(this.props.schedule)} options={options} redraw />
         </div>
         <Divider variant="middle" />
         <CardContent style={styles.cardContent}>
@@ -284,11 +299,11 @@ class ScheduleCard extends Component {
                   <Card elevation={3}>
                     <CardHeader
                       style={styles.cardHeaderDialog}
-                      title={<Typography variant="h6">Overall Rating: {this.props.schedule.professorRating}</Typography>}
+                      title={<Typography variant="h6">Overall Rating: {this.props.schedule.overallRating}</Typography>}
                     />
                     <CardContent>
                       <div style={styles.chart}>
-                        <RadarChart data={this.props.chartData} options={{legend: {display: false}}} redraw />
+                        <RadarChart data={this.props.schedule && getChartData(this.props.schedule)} options={options} redraw />
                       </div>
                     </CardContent>
                   </Card>
