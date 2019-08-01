@@ -16,6 +16,7 @@ import DialogTitle from '@material-ui/core/DialogTitle';
 import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
+import Avatar from '@material-ui/core/Avatar';
 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -23,7 +24,7 @@ import CourseTable from './CourseTable'
 import '../main.scss'
 
 
-var RadarChart = require("react-chartjs").Radar;
+import { Radar } from 'react-chartjs-2';
 
 const Transition = React.forwardRef(function Transition(props, ref) {
   return <Slide direction="up" ref={ref} {...props} />;
@@ -172,12 +173,23 @@ function getEvents(schedule) {
 const options = {
   responsive: false,
   maintainAspectRatio: true,
+  legend: {
+    display: false
+  },
   scale: {
     ticks: {
-      display: true,
-      beginAtZero: true,
+      display: false,
       min: 0,
-      max: 100
+      max: 100,
+      stepSize: 20,
+    }
+  },
+  tooltips: {
+    enabled: true,
+    callbacks: {
+        label: function(tooltipItem, data) {
+            return data.datasets[tooltipItem.datasetIndex].label + ' : ' + data.datasets[tooltipItem.datasetIndex].data[tooltipItem.index];
+        }
     }
   }
 }
@@ -187,12 +199,11 @@ function getChartData(schedule) {
     labels: ['Gap', 'Lunch', 'Professor'],
     datasets: [{
       label: 'Rating',
-      fillColor: "rgba(0,220,220,0.2)",
-      strokeColor: "rgba(0,220,220,1)",
-      pointColor: "rgba(0,220,220,1)",
-      pointStrokeColor: "#fff",
-      pointHighlightFill: "#fff",
-      pointHighlightStroke: "rgba(220,220,220,1)",
+      backgroundColor: "rgba(0,220,220,0.2)",
+      pointBackgroundColor: "rgba(0,220,220,0.2)",
+      hoverPointBackgroundColor: "#fff",
+      pointHighlightStroke: "rgba(0,220,220,0.2)",
+      borderColor: "rgba(0,220,220,0.2)",
       data: [schedule.gapRating, schedule.lunchRating, schedule.professorRating]
     }]
   }
@@ -231,9 +242,10 @@ class ScheduleCard extends Component {
             </IconButton>
           }
           title={<Typography style={styles.cardTitle}>Overall Rating: {this.props.schedule.overallRating}</Typography>}
+          avatar={<Avatar>{this.props.schedule.grade}</Avatar>}
         />
         <div style={styles.chart}>
-          <RadarChart data={this.props.schedule && getChartData(this.props.schedule)} options={options} redraw />
+          <Radar data={this.props.schedule && getChartData(this.props.schedule)} options={options} redraw />
         </div>
         <Divider variant="middle" />
         <CardContent style={styles.cardContent}>
@@ -303,7 +315,7 @@ class ScheduleCard extends Component {
                     />
                     <CardContent>
                       <div style={styles.chart}>
-                        <RadarChart data={this.props.schedule && getChartData(this.props.schedule)} options={options} redraw />
+                        <Radar data={this.props.schedule && getChartData(this.props.schedule)} options={options} redraw />
                       </div>
                     </CardContent>
                   </Card>

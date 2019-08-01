@@ -17,7 +17,6 @@ const styles = {
 
 const mockQuest =
 `
-
 GO!
 Kevin Jin
 My Academics
@@ -50,14 +49,14 @@ W 7:00PM - 8:50PM
 TBA
 Staff
 10/30/2019 - 10/30/2019
-8649
-003
+6169
+002
 LEC
-TTh 10:00AM - 11:20AM
-PHY 313
-Caroline Kierstead
+TTh 2:30PM - 3:50PM
+MC 4020
+Peter Buhr
 09/04/2019 - 12/03/2019
-CS 135 - Intro to Database Management
+CS 348 - Intro to Database Management
 Status	Units	Grading	Deadlines
 Enrolled
 0.50
@@ -85,10 +84,10 @@ Enrolled
 Numeric Grading Basis
 Academic Calendar Deadlines
 Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
-6319
-002
+6318
+001
 LEC
-MWF 12:30PM - 1:20PM
+MWF 11:30AM - 12:20PM
 MC 1056
 Jeffery Avery
 09/04/2019 - 12/03/2019

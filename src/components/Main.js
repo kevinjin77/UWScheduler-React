@@ -15,9 +15,13 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
+import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
+
+const percentile = require("percentile");
 
 const uwApiKey = "a0fa5a0445627c840d18a3cf30d89995";
 
@@ -167,11 +171,10 @@ function calculateProfessorRating(schedule, instructorMap) {
       sum += instructorMap[`${fName} ${lName}`] ? instructorMap[`${fName} ${lName}`] : 2.5
     }
   })
-  schedule['professorRating'] = parseFloat(((sum / numLecs) * 20).toFixed(2))
+  schedule['professorRating'] = parseFloat((sum / numLecs) * 20)
 }
 
 function getTimes(schedule) {
-  console.log(schedule)
   let mTimes, tTimes, wTimes, thTimes, fTimes
   mTimes = []
   tTimes = []
@@ -208,17 +211,20 @@ function calculateGapRating(schedule) {
   let times = getTimes(schedule)
   times.forEach(time => {
     let numTimes = time.length
-    if (numTimes <= 2) return;
+    if (numTimes <= 2) {
+      rating += 2;
+      return;
+    }
     for (let i = 1; i < numTimes - 1; i+=2) {
       let elapsed = (time[i+1] - time[i]) / 60000
       if (elapsed <= 10) {
+        rating += 2;
+      } else if (elapsed > 70) {
         ++rating;
-      } else if ( elapsed <= 70) {
-        --rating;
       }
     }
   })
-  schedule['gapRating'] = rating * 10
+  schedule['gapRating'] = rating * 5
 }
 
 function calculateLunchRating(schedule) {
@@ -236,8 +242,10 @@ function calculateLunchRating(schedule) {
         let elapsed = (time[i+1] - time[i]) / 60000
         if (elapsed <= 30) {
           rating = Math.max(0, rating)
-        } else {
+        } else if (elapsed <= 60) {
           rating = Math.max(1, rating)
+        } else {
+          rating = Math.max(2, rating)
         }
       }
     }
@@ -251,9 +259,35 @@ function calculateRating(schedules, instructorMap) {
     calculateProfessorRating(schedule, instructorMap)
     calculateGapRating(schedule)
     calculateLunchRating(schedule)
-    schedule.overallRating = schedule.professorRating + (schedule.lunchRating / 5) + (schedule.gapRating / 5)
+    schedule.overallRating = parseFloat((schedule.professorRating * 0.6 + schedule.lunchRating * 0.2 + schedule.gapRating * 0.2).toFixed(2))
   })
   schedules.sort((a, b) => b.overallRating - a.overallRating)
+  // A+
+  const q95 = percentile(95, schedules, schedule => schedule.overallRating).overallRating
+  // A
+  const q90 = percentile(90, schedules, schedule => schedule.overallRating).overallRating
+  // B
+  const q75 = percentile(75, schedules, schedule => schedule.overallRating).overallRating
+  // C
+  const q50 = percentile(50, schedules, schedule => schedule.overallRating).overallRating
+  // D
+  const q30 = percentile(30, schedules, schedule => schedule.overallRating).overallRating
+  schedules.forEach(schedule => {
+    if (schedule.overallRating >= q95) {
+      schedule.grade = 'A+'
+    } else if (schedule.overallRating >= q90) {
+      schedule.grade = 'A'
+    } else if (schedule.overallRating >= q75) {
+      schedule.grade = 'B'
+    } else if (schedule.overallRating >= q50) {
+      schedule.grade = 'C'
+    } else if (schedule.overallRating >= q30) {
+      schedule.grade = 'D'
+    } else {
+      schedule.grade = 'F'
+    }
+  })
+  console.log(schedules)
 }
 
 class Main extends Component {
@@ -264,6 +298,7 @@ class Main extends Component {
         schedules: [],
         showAll: false,
         instructors: {},
+        tutorials: false,
         errorMsg: ''
     };
   }
@@ -305,11 +340,12 @@ class Main extends Component {
     let courses = []
     courseInfoArr.forEach(course => {
       courses.push(course.filter(classe => classe.section.includes('LEC')))
-      courses.push(course.filter(classe => classe.section.includes('TUT')))
+      if (this.state.tutorials) {
+        courses.push(course.filter(classe => classe.section.includes('TUT')))
+      }
     })
     courses = courses.filter(course => course.length > 0)
     let schedules = cartesianProduct(courses).filter(schedule => isValidSchedule(schedule))
-    console.log(this.state.instructors)
     calculateRating(schedules, this.state.instructors)
     this.setState({
       schedules: schedules,
@@ -368,6 +404,10 @@ class Main extends Component {
 
   handleClose = () => {
     this.setState({errorMsg: ''})
+  }
+
+  handleTutorials = () => {
+    this.setState({tutorials: !this.state.tutorials})
   }
 
   render() {
@@ -452,6 +492,16 @@ class Main extends Component {
                 min={0}
                 max={10}
               />
+              <FormControlLabel
+                control={
+                  <Checkbox
+                    checked={this.state.tutorials}
+                    onChange={this.handleTutorials}
+                    color="primary"
+                  />
+                }
+                label="Include Tutorials? (This may lead to a lot more results.)"
+              />
               </Paper>
             </Grid>
           </Grid>
@@ -475,9 +525,11 @@ class Main extends Component {
                 )
               })}
               {!this.state.showAll && this.state.schedules.length > 20 &&
-                <Button onClick={this.handleShowAll} variant="contained" color="primary">
-                  Show All ({this.state.schedules.length - 20} More)
-                </Button>
+                <Grid style={{display: 'flex'}} item xs={12} justify="center">
+                  <Button onClick={this.handleShowAll} variant="contained" color="primary">
+                    Show All ({this.state.schedules.length - 20} More)
+                  </Button>
+                </Grid>
               }
             </Grid>
           </div>
