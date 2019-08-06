@@ -21,7 +21,6 @@ import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
 import CloseIcon from '@material-ui/icons/Close';
-import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 const percentile = require("percentile");
 
@@ -260,6 +259,15 @@ function calculateLunchRating(schedule) {
   schedule['lunchRating'] = lunchRating * 10
 }
 
+function sameLecs(schedule1, schedule2) {
+  for (let i = 0; i < schedule1.length; ++i) {
+    if (schedule1[i] !== schedule2[i]) {
+      return false;
+    }
+  }
+  return true;
+}
+
 function calculateRating(schedules, instructorMap) {
   schedules.forEach(schedule => {
     calculateProfessorRating(schedule, instructorMap)
@@ -268,6 +276,15 @@ function calculateRating(schedules, instructorMap) {
     schedule.overallRating = parseFloat((schedule.professorRating * 0.6 + schedule.lunchRating * 0.2 + schedule.gapRating * 0.2).toFixed(2))
   })
   schedules.sort((a, b) => b.overallRating - a.overallRating)
+  let maxIndex = schedules.length - 1;
+  for (let i = 0; i < maxIndex; ++i) {
+    if (sameLecs(schedules[i], schedules[i+1])) {
+      schedules.splice(i+1, 1);
+      --i;
+      --maxIndex;
+    }
+  }
+
   // A+
   const q95 = percentile(95, schedules, schedule => schedule.overallRating).overallRating
   // A
@@ -363,9 +380,7 @@ class Main extends Component {
     let courses = []
     courseInfoArr.forEach(course => {
       courses.push(course.filter(classe => classe.section.includes('LEC')))
-      if (this.state.tutorials) {
-        courses.push(course.filter(classe => classe.section.includes('TUT')))
-      }
+      courses.push(course.filter(classe => classe.section.includes('TUT')))
     })
     courses = courses.filter(course => course.length > 0)
     if (!this.state.morning) {
@@ -383,6 +398,12 @@ class Main extends Component {
     })
 
     let schedules = cartesianProduct(courses).filter(schedule => isValidSchedule(schedule))
+    if (!this.state.tutorials) {
+      for (let i = 0; i < schedules.length; ++i) {
+        schedules[i] = schedules[i].filter(course => course.section.includes('LEC'))
+      }
+    }
+
     if (schedules.length === 0) {
       this.handleError('No valid schedules can be made given your requirements!')
     }
@@ -606,15 +627,15 @@ class Main extends Component {
         {this.state.schedules.length > 0 && !this.state.loading &&
           <div className='schedules'>
             <Grid style={{margin: 0}} container justify="center" spacing={2}>
-              {(this.state.showAll ? this.state.schedules : this.state.schedules.slice(0, 20)).map(schedule => {
+              {(this.state.showAll ? this.state.schedules : this.state.schedules.slice(0, 20)).map((schedule, index) => {
                 return (
-                  <Grid item>
+                  <Grid item key={index}>
                     <ScheduleCard instructors={this.state.instructors} schedule={schedule} />
                   </Grid>
                 )
               })}
               {!this.state.showAll && this.state.schedules.length > 20 &&
-                <Grid style={{display: 'flex'}} item xs={12} justify="center">
+                <Grid style={{display: 'flex'}} item xs={12} container justify="center">
                   <Button onClick={this.handleShowAll} variant="contained" color="primary">
                     Show All ({this.state.schedules.length - 20} More)
                   </Button>

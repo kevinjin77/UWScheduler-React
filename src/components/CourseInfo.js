@@ -97,7 +97,7 @@ class CourseInfo extends Component {
               <InputLabel htmlFor="term-helper">Term</InputLabel>
               <Select value={term} onChange={this.handleTerm}>
                 {termMap.map(termEntry => {
-                  return (<MenuItem value={termEntry[1]}>{termEntry[0]}</MenuItem>)
+                  return (<MenuItem key={termEntry[0]} value={termEntry[1]}>{termEntry[0]}</MenuItem>)
                 })}
               </Select>
             </FormControl>
