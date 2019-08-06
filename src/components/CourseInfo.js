@@ -92,7 +92,7 @@ class CourseInfo extends Component {
           />
         </RadioGroup>
         {mode === 'manual' ? 
-          <form noValidate autoComplete="off">
+          <div>
             <FormControl style={{width: '150px'}}>
               <InputLabel htmlFor="term-helper">Term</InputLabel>
               <Select value={term} onChange={this.handleTerm}>
@@ -103,7 +103,7 @@ class CourseInfo extends Component {
             </FormControl>
             <br/><br/>
             <Demo />
-          </form> :
+          </div> :
           <div>
             <p style={styles.instructions}>
               1. <a 
