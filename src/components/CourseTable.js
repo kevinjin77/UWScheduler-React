@@ -11,7 +11,7 @@ const styles = {
     whiteSpace: 'nowrap',
   },
   instructor: {
-    maxWidth: '120px',
+    maxWidth: '100px',
     whiteSpace: 'nowrap',
     overflow: 'hidden',
     textOverflow: 'ellipsis'

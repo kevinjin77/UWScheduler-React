@@ -273,7 +273,7 @@ function calculateRating(schedules, instructorMap) {
     calculateProfessorRating(schedule, instructorMap)
     calculateGapRating(schedule)
     calculateLunchRating(schedule)
-    schedule.overallRating = parseFloat((schedule.professorRating * 0.6 + schedule.lunchRating * 0.2 + schedule.gapRating * 0.2).toFixed(2))
+    schedule.overallRating = parseFloat((schedule.professorRating * 0.9 + schedule.lunchRating * 0.05 + schedule.gapRating * 0.05).toFixed(2))
   })
   schedules.sort((a, b) => b.overallRating - a.overallRating)
   let maxIndex = schedules.length - 1;
@@ -459,6 +459,12 @@ class Main extends Component {
         let courseString = courses[i].innerHTML.substr(0, courses[i].innerHTML.indexOf('-')-1).replace(/\s/g, '')
         courseArr.push(courseString)
       }
+    }
+    if (term === '') {
+      this.handleError('Please enter a valid term!')
+    }
+    if (courseArr.length === 0) {
+      this.handleError('You have no valid courses!')
     }
     this.getInfo(courseArr, term);
   }

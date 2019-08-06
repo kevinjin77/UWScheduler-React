@@ -38,7 +38,7 @@ const styles = {
     width: '100%'
   },
   card: {
-    maxWidth: 445,
+    width: 400,
   },
   chart: {
     display: 'flex',
@@ -55,6 +55,9 @@ const styles = {
     background: '#24292e',
     color: 'white',
     padding: '16px 16px'
+  },
+  avatar: {
+    backgroundColor: 'green'
   },
   cardTitle: {
     fontWeight: 500,
@@ -242,7 +245,7 @@ class ScheduleCard extends Component {
             </IconButton>
           }
           title={<Typography style={styles.cardTitle}>Overall Rating: {this.props.schedule.overallRating}</Typography>}
-          avatar={<Avatar>{this.props.schedule.grade}</Avatar>}
+          avatar={<Avatar style={styles.avatar}>{this.props.schedule.grade}</Avatar>}
         />
         <div style={styles.chart}>
           <Radar data={this.props.schedule && getChartData(this.props.schedule)} options={options} redraw />
