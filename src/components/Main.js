@@ -299,8 +299,9 @@ class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        mode: 'quest',
+        mode: 'manual',
         term: '',
+        quest: '',
         courses: [],
         loading: false,
         schedules: [],
@@ -319,6 +320,10 @@ class Main extends Component {
 
   handleTerm = (term) => {
     this.setState({term: term})
+  }
+
+  handleQuest = (quest) => {
+    this.setState({quest: quest})
   }
 
   getInstructorRatings = (courseInfoArr) => {
@@ -494,6 +499,8 @@ class Main extends Component {
                   onHandleMode={this.handleMode}
                   term={this.state.term}
                   onHandleTerm={this.handleTerm}
+                  quest={this.state.quest}
+                  onHandleQuest={this.handleQuest}
                 />
               </Paper>
             </Grid>
