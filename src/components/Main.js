@@ -15,10 +15,12 @@ import Toolbar from '@material-ui/core/Toolbar';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Slider from '@material-ui/core/Slider';
+import FormGroup from '@material-ui/core/FormGroup';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
 import Checkbox from '@material-ui/core/Checkbox';
 import CircularProgress from '@material-ui/core/CircularProgress';
 import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
 import SnackbarContent from '@material-ui/core/SnackbarContent';
 
 const percentile = require("percentile");
@@ -37,7 +39,7 @@ const styles = {
     paddingRight: '10px'
   },
   slider: {
-    padding: '30px 0'
+    padding: '25px 0'
   }
 }
 
@@ -171,7 +173,7 @@ function calculateProfessorRating(schedule, instructorMap) {
       sum += instructorMap[`${fName} ${lName}`] ? instructorMap[`${fName} ${lName}`] : 2.5
     }
   })
-  schedule['professorRating'] = parseFloat((sum / numLecs) * 20)
+  schedule['professorRating'] = parseFloat(((sum / numLecs) * 20).toFixed(2))
 }
 
 function getTimes(schedule) {
@@ -207,24 +209,28 @@ function getTimes(schedule) {
 }
 
 function calculateGapRating(schedule) {
-  let rating = 0;
+  let gapRating = 0;
   let times = getTimes(schedule)
   times.forEach(time => {
     let numTimes = time.length
     if (numTimes <= 2) {
-      rating += 2;
+      gapRating += 2;
       return;
     }
+    let rating = 0;
     for (let i = 1; i < numTimes - 1; i+=2) {
       let elapsed = (time[i+1] - time[i]) / 60000
       if (elapsed <= 10) {
-        rating += 2;
-      } else if (elapsed > 70) {
         ++rating;
+        rating = Math.min(2, rating)
+      } else if (elapsed <= 70) {
+        --rating;
+        rating = Math.max(0, rating)
       }
     }
+    gapRating += rating
   })
-  schedule['gapRating'] = rating * 5
+  schedule['gapRating'] = gapRating * 10
 }
 
 function calculateLunchRating(schedule) {
@@ -287,20 +293,32 @@ function calculateRating(schedules, instructorMap) {
       schedule.grade = 'F'
     }
   })
-  console.log(schedules)
 }
 
 class Main extends Component {
   constructor(props) {
     super(props);
     this.state = {
+        mode: 'quest',
+        term: '',
+        courses: [],
         loading: false,
         schedules: [],
         showAll: false,
         instructors: {},
         tutorials: false,
+        morning: true,
+        night: true,
         errorMsg: ''
     };
+  }
+
+  handleMode = (mode) => {
+    this.setState({mode: mode})
+  }
+
+  handleTerm = (term) => {
+    this.setState({term: term})
   }
 
   getInstructorRatings = (courseInfoArr) => {
@@ -345,12 +363,32 @@ class Main extends Component {
       }
     })
     courses = courses.filter(course => course.length > 0)
-    let schedules = cartesianProduct(courses).filter(schedule => isValidSchedule(schedule))
-    calculateRating(schedules, this.state.instructors)
-    this.setState({
-      schedules: schedules,
-      loading: false
+    if (!this.state.morning) {
+      courses = courses.map(course => course = course.filter(classe => classe.classes[0].date.start_time !== '8:30'))
+    }
+    if (!this.state.night) {
+      courses = courses.map(course => course = course.filter(classe => 
+        new Date(`1/1/2000 ${classe.classes[0].date.start_time}`) < new Date(`1/1/2000 18:00`)))
+    }
+
+    courses.forEach(course => {
+      if (course.length === 0) {
+        this.handleError('No valid schedules can be made given your requirements!')
+      }
     })
+
+    let schedules = cartesianProduct(courses).filter(schedule => isValidSchedule(schedule))
+    if (schedules.length === 0) {
+      this.handleError('No valid schedules can be made given your requirements!')
+    }
+    
+    if (this.state.errorMsg === '') {
+      calculateRating(schedules, this.state.instructors)
+      this.setState({
+        schedules: schedules,
+        loading: false
+      })
+    }
   }
 
   getInfo = (courseArr, term) => {
@@ -381,17 +419,31 @@ class Main extends Component {
       })
   }
 
-  generateSchedules = (scheduleString) => {
-    const term = termToInt(getTermFromQuest(scheduleString));
-    const courseArr = getCoursesFromQuest(scheduleString);
+  generateSchedules = () => {
+    let term;
+    let courseArr = []
+    if (this.state.mode === 'quest') {
+      let scheduleString = document.getElementById('quest-input').value;
+      term = termToInt(getTermFromQuest(scheduleString));
+      courseArr = getCoursesFromQuest(scheduleString);
+    } else {
+      term = this.state.term
+      let courses = document.getElementsByClassName('MuiTypography-root MuiListItemText-primary MuiTypography-body2')
+      for (let i = 0; i < courses.length; ++i) {
+        let courseString = courses[i].innerHTML.substr(0, courses[i].innerHTML.indexOf('-')-1).replace(/\s/g, '')
+        courseArr.push(courseString)
+      }
+    }
     this.getInfo(courseArr, term);
   }
 
   handleSubmit = () => {
-    this.setState({loading: true})
-    let scheduleString = document.getElementById('quest-input').value;
+    this.setState({
+      loading: true,
+      errorMsg: ''
+    })
     try {
-      this.generateSchedules(scheduleString)
+      this.generateSchedules()
     }
     catch(error) {
       this.setState({loading: false, errorMsg: error})
@@ -406,8 +458,11 @@ class Main extends Component {
     this.setState({errorMsg: ''})
   }
 
-  handleTutorials = () => {
-    this.setState({tutorials: !this.state.tutorials})
+  handleError = (errorMsg) => {
+    this.setState({
+      errorMsg: errorMsg,
+      loading: false
+    })
   }
 
   render() {
@@ -434,7 +489,12 @@ class Main extends Component {
             <Grid item xs={12} sm={6}>
               <Paper square className='courses'>
                 <h2>Course Information</h2>
-                <CourseInfo />
+                <CourseInfo
+                  mode={this.state.mode}
+                  onHandleMode={this.handleMode}
+                  term={this.state.term}
+                  onHandleTerm={this.handleTerm}
+                />
               </Paper>
             </Grid>
             <Grid item xs={12} sm={6}>
@@ -492,16 +552,38 @@ class Main extends Component {
                 min={0}
                 max={10}
               />
-              <FormControlLabel
-                control={
-                  <Checkbox
-                    checked={this.state.tutorials}
-                    onChange={this.handleTutorials}
-                    color="primary"
-                  />
-                }
-                label="Include Tutorials? (This may lead to a lot more results.)"
-              />
+              <FormGroup>
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.morning}
+                      onChange={() => this.setState({morning: !this.state.morning})}
+                      color="primary"
+                    />
+                  }
+                  label="Allow 8:30AM Classes?"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.night}
+                      onChange={() => this.setState({night: !this.state.night})}
+                      color="primary"
+                    />
+                  }
+                  label="Allow Night Classes? (After 6:00PM)"
+                />
+                <FormControlLabel
+                  control={
+                    <Checkbox
+                      checked={this.state.tutorials}
+                      onChange={() => this.setState({tutorials: !this.state.tutorials})}
+                      color="primary"
+                    />
+                  }
+                  label="Include Tutorials? (This may lead to a lot more results.)"
+                />
+              </FormGroup>
               </Paper>
             </Grid>
           </Grid>
@@ -514,7 +596,7 @@ class Main extends Component {
             }
           </div>
         </div>
-        {this.state.schedules.length > 0 && 
+        {this.state.schedules.length > 0 && !this.state.loading &&
           <div className='schedules'>
             <Grid style={{margin: 0}} container justify="center" spacing={2}>
               {(this.state.showAll ? this.state.schedules : this.state.schedules.slice(0, 20)).map(schedule => {
@@ -540,6 +622,16 @@ class Main extends Component {
           open={this.state.errorMsg !== ''}
           onClose={this.handleClose}
           message={<span>{this.state.errorMsg}</span>}
+          action={[
+            <IconButton
+              key="close"
+              aria-label="close"
+              color="inherit"
+              onClick={this.handleClose}
+            >
+              <CloseIcon />
+            </IconButton>,
+          ]}
         />
       </div>
     );

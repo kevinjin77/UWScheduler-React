@@ -171,7 +171,7 @@ export default function IntegrationAutosuggest() {
           classes,
           id: 'react-autosuggest-simple',
           label: 'Course',
-          placeholder: 'Enter a course code',
+          placeholder: 'Enter a course code (eg. MATH135)',
           value: state.single,
           onChange: handleChange('single'),
         }}

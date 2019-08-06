@@ -3,7 +3,11 @@ import React, { Component } from 'react';
 import TextField from '@material-ui/core/TextField';
 import Radio from '@material-ui/core/Radio';
 import RadioGroup from '@material-ui/core/RadioGroup';
+import FormControl from '@material-ui/core/FormControl';
 import FormControlLabel from '@material-ui/core/FormControlLabel';
+import Select from '@material-ui/core/Select';
+import InputLabel from '@material-ui/core/InputLabel';
+import MenuItem from '@material-ui/core/MenuItem';
 import Demo from './Autocomplete'
 
 const styles = {
@@ -165,64 +169,84 @@ Printer Friendly Page
 Go to top iconGo to top
 `
 
+let termMap = [];
+
+function getTermMap() {
+  let terms = [];
+  let termNums = []
+  const today = new Date();
+  const currMonth = today.getMonth() + 1;
+  const currYear = today.getFullYear();
+  const initTerm = 1100 + ((currYear - 2010) * 10 + 1 + 4 * Math.floor((currMonth - 1)/4))
+  if (currMonth >= 1 && currMonth <= 4) {
+    terms = ['Fall ' + (currYear-1), 'Winter ' + currYear, 'Spring ' + currYear]
+    termNums = [initTerm - 2, initTerm, initTerm + 4]
+  } else if (currMonth >= 5 && currMonth <= 8) {
+    terms = ['Winter ' + currYear, 'Spring ' + currYear, 'Fall ' + currYear]
+    termNums = [initTerm - 4, initTerm, initTerm + 4]
+  } else if (currMonth >= 9 && currMonth <= 12) {
+    terms = ['Spring ' + currYear, 'Fall ' + currYear, 'Winter ' + (currYear+1)]
+    termNums = [initTerm - 4, initTerm, initTerm + 2]
+  }
+
+  for (let i = 0; i < terms.length; ++i) {
+    termMap.push([terms[i], termNums[i]]);
+  }
+}
+
 class CourseInfo extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      mode: 'manual',
-        form: {
-          term: '',
-          numCourses: 2
-        }
-    };
+    this.handleMode = this.handleMode.bind(this);
+    this.handleTerm = this.handleTerm.bind(this);
+  }
+
+  componentWillMount = () => {
+    getTermMap();
+  }
+
+  handleTerm = event => {
+    this.props.onHandleTerm(event.target.value)
   }
 
   handleMode = event => {
-    this.setState({
-      mode: event.target.value
-    })
+    this.props.onHandleMode(event.target.value)
   }
 
-  handleChange = name => event => {
-    this.setState({
-      form: {
-        ...this.state.form,
-        [name]: event.target.value
-      }
-    })
-  };
-
   render() {
-    const { form: {term} } = this.state;
+    const mode = this.props.mode;
+    const term = this.props.term;
+    const courses = this.props.courses;
     return (
       <div>
-        <RadioGroup aria-label="position" name="position" value={this.state.mode} onChange={this.handleMode} row>
+        <RadioGroup aria-label="position" name="position" value={mode} onChange={this.handleMode} row>
           <FormControlLabel
             style={styles.leftRadio}
-            checked={this.state.mode === 'manual'}
-            value="manual"
-            control={<Radio />}
-            label="Manual Entry"
-            labelPlacement="end"
-          />
-          <FormControlLabel
-            checked={this.state.mode === 'quest'}
+            checked={mode === 'quest'}
             value="quest"
             control={<Radio />}
             label="Import From Quest"
             labelPlacement="end"
           />
+          <FormControlLabel
+            checked={mode === 'manual'}
+            value="manual"
+            control={<Radio />}
+            label="Manual Entry"
+            labelPlacement="end"
+          />
         </RadioGroup>
-        {this.state.mode === 'manual' ? 
+        {mode === 'manual' ? 
           <form noValidate autoComplete="off">
-            <TextField
-              id="term"
-              label="Term"
-              value={term}
-              onChange={this.handleChange('term')}
-              margin="normal"
-            />
-            <br/>
+            <FormControl style={{width: '150px'}}>
+              <InputLabel htmlFor="term-helper">Term</InputLabel>
+              <Select value={term} onChange={this.handleTerm}>
+                {termMap.map(termEntry => {
+                  return (<MenuItem value={termEntry[1]}>{termEntry[0]}</MenuItem>)
+                })}
+              </Select>
+            </FormControl>
+            <br/><br/>
             <Demo />
           </form> :
           <div>
