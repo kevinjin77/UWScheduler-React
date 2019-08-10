@@ -222,7 +222,7 @@ function calculateGapRating(schedule) {
       if (elapsed <= 10) {
         ++rating;
         rating = Math.min(2, rating)
-      } else if (elapsed <= 70) {
+      } else if (elapsed <= 70 || elapsed >= 180) {
         --rating;
         rating = Math.max(0, rating)
       }
@@ -241,20 +241,23 @@ function calculateLunchRating(schedule) {
       lunchRating += 2
       return
     }
-    let rating = 0
-    for (let i = 1; i < times.length - 1; i+=2) {
-      if (time[i] <= new Date("1/1/2000 14:00") && time[i+1] >= new Date("1/1/2000 11:00")) {
-        let elapsed = (time[i+1] - time[i]) / 60000
-        if (elapsed <= 30) {
-          rating = Math.max(0, rating)
-        } else if (elapsed <= 60) {
-          rating = Math.max(1, rating)
-        } else {
-          rating = Math.max(2, rating)
-        }
+    console.log(times)
+    let lunchTime = 150
+    let start1 = new Date("1/1/2000 11:00")
+    let end1 = new Date("1/1/2000 13:30")
+    for (let i = 0; i < time.length - 1; i+=2) {
+      let start2 = time[i]
+      let end2 = time[i+1]
+      if (start1 <= end2 && end1 >= start2) {
+        let overlap = Math.min(end1 - start1, end1 - start2, end2 - start2, end2 - start1) / 60000
+        lunchTime -= overlap
       }
     }
-    lunchRating += rating
+    if (lunchTime >= 90) {
+      lunchRating += 2;
+    } else if (lunchTime >= 60) {
+      lunchRating += 1;
+    }
   })
   schedule['lunchRating'] = lunchRating * 10
 }
