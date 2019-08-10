@@ -80,8 +80,8 @@ const useStyles = makeStyles(theme => ({
   root: {
     height: 250,
     flexGrow: 1,
-    width: '85%',
-    maxWidth: '40vw'
+    width: '40vw',
+    minWidth: '300px'
   },
   container: {
     position: 'relative',

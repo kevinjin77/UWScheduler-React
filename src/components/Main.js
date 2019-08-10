@@ -241,7 +241,6 @@ function calculateLunchRating(schedule) {
       lunchRating += 2
       return
     }
-    console.log(times)
     let lunchTime = 150
     let start1 = new Date("1/1/2000 11:00")
     let end1 = new Date("1/1/2000 13:30")
@@ -387,7 +386,8 @@ class Main extends Component {
     })
     courses = courses.filter(course => course.length > 0)
     if (!this.state.morning) {
-      courses = courses.map(course => course = course.filter(classe => classe.classes[0].date.start_time !== '8:30'))
+      courses = courses.map(course => course = course.filter(classe => 
+        new Date(`1/1/2000 ${classe.classes[0].date.start_time}`) > new Date(`1/1/2000 08:30`)))
     }
     if (!this.state.night) {
       courses = courses.map(course => course = course.filter(classe => 
