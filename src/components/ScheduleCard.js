@@ -17,6 +17,8 @@ import Slide from '@material-ui/core/Slide';
 import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
+import Snackbar from '@material-ui/core/Snackbar';
+import CloseIcon from '@material-ui/icons/Close';
 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -218,11 +220,98 @@ function getMaxTime(schedule) {
   return `${maxTime.getHours() + 1}:00:00`
 }
 
+function convertDate(date) {
+  let year = date.substr(0, date.indexOf('-'))
+  let minusYear = date.substr(date.indexOf('-') + 1);
+  let month = minusYear.substr(0, minusYear.indexOf('-'));
+  let day = minusYear.substr(minusYear.indexOf('-') + 1);
+  return `${month}/${day}/${year}`;
+}
+
+function convertTime(time) {
+  let hour = parseInt(time.substr(0, time.indexOf(':')));
+  let minute = time.substr(time.indexOf(':') + 1);
+  if (hour >= 12) {
+    return `${(hour === 12) ? 12 : hour - 12}:${minute}PM`
+  } else {
+    return `${hour}:${minute}AM`
+  }
+}
+
+function flowConvertCourse (course) {
+  let courseProfessor = course.classes[0].instructors[0];
+  let fName;
+  let lName;
+  if (courseProfessor) {
+    let commaIndex = courseProfessor.indexOf(',');
+    let spaceIndex = courseProfessor.indexOf(' ');
+    lName = courseProfessor.substring(0, commaIndex);
+    fName = spaceIndex === -1 ? courseProfessor.substring(commaIndex + 1) :
+    courseProfessor.substring(commaIndex + 1, spaceIndex);
+  } else {
+    lName = '';
+    fName = '';
+  }
+  return `
+${course.subject} ${course.catalog_number} - ${course.title}
+Status	Units	Grading	Deadlines
+Enrolled
+0.50
+Numeric Grading Basis
+Academic Calendar Deadlines
+Class Nbr	Section	Component	Days & Times	Room	Instructor	Start/End Date
+${course.class_number}
+${course.section.substr(course.section.indexOf(' ') + 1)}
+${course.section.substr(0, course.section.indexOf(' '))}
+${course.classes[0].date.weekdays} ${convertTime(course.classes[0].date.start_time)} - ${convertTime(course.classes[0].date.end_time)}
+${course.classes[0].location.building} ${course.classes[0].location.room}
+09/04/2019 - 12/03/2019`;
+}
+
+function flowConvert(schedule) {
+  let header =
+    `
+GO!
+John Smith
+My Academics
+Course Selection (Undergrad only)
+Search for Classes
+Enroll
+ 	My Class Schedule	 	 	|	 	 	Shopping Cart	 	 	|	 	 	Add	 	 	|	 	 	Drop	 	 	|	 	 	Swap	 	 	|	 	 	Edit	 	 	|	 	 	Term Information	 	 	|	 	 	Exam Information	 
+My Class Schedule
+List View
+Weekly Calendar View
+Select Display Option
+L
+Fall 2019 | Undergraduate | University of Waterloo
+Group Box
+Collapse section Class Schedule Filter Options Class Schedule Filter Options 
+Show Enrolled Classes
+Show Dropped Classes
+Show Waitlisted Classes`;
+
+  let footer =
+    `
+Printer Friendly Page
+Go to top iconGo to top
+    `
+  schedule.forEach(course => {
+
+  })
+
+  let courses = '';
+  schedule.forEach(course => {
+    courses += flowConvertCourse(course);
+  })
+  return header + courses + footer;
+}
+
 class ScheduleCard extends Component {
   constructor(props) {
     super(props);
     this.state = {
-        open: false
+        open: false,
+        snackbar: false
     };
   }
 
@@ -231,7 +320,11 @@ class ScheduleCard extends Component {
   }
 
   handleClose = () => {
-    this.setState({open: false})
+    this.setState({open: false, snackbar: false})
+  }
+
+  handleSnackbarClose = () => {
+    this.setState({snackbar: false})
   }
 
   render() {
@@ -331,9 +424,19 @@ class ScheduleCard extends Component {
                     <CardContent style={{paddingTop: 0}}>
                       <p style={{fontSize: '14px'}}>Export Schedule to:</p>
                       <div style={{...styles.center, flexDirection: 'column'}}>
-                        <Button variant="contained" color="primary">
+                        <Button variant="contained" color="primary"
+                          onClick={() => {
+                            this.setState({snackbar: true})
+                            navigator.clipboard.writeText(flowConvert(this.props.schedule))
+                          }}>
                         UWFlow
                         </Button>
+                        <Snackbar
+                          anchorOrigin={{ vertical: 'bottom', horizontal: 'left' }}
+                          open={this.state.snackbar}
+                          onClose={this.handleClose}
+                          message={<span>Copied to Clipboard!</span>}
+                        />
                         <br/>
                         <Button variant="contained" color="primary">
                           Google Calendar

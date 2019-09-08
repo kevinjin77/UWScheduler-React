@@ -109,11 +109,10 @@ class CourseInfo extends Component {
               1. <a 
               href="https://quest.pecs.uwaterloo.ca/psp/SS/?cmd=login&languageCd=ENG"
               target="_blank" 
-              rel="noopener noreferrer">Sign in to Quest</a> and click <b>Enroll</b>. <br/><br/>
-              2. Click the <b>My Class Schedule</b> tab. <br/><br/>
-              3. Select all and copy. (List View) <br/><br/>
-              4. Paste into the box below! <br/><br/>
-              5. Click the "Generate Schedules" button below. <br/>
+              rel="noopener noreferrer">Sign in to Quest</a> and click <b>My Class Schedule</b>. <br/><br/>
+              2. Select all and copy. (List View) <br/><br/>
+              3. Paste into the box below! <br/><br/>
+              4. Click the "Generate Schedules" button below. <br/>
             </p>
             <TextField
               ref="questInput"
