@@ -2,7 +2,11 @@
 
 An application to help Waterloo students find the best possible schedules to fit their needs.
 
-![Landing Page](https://github.com/kevinjin77/UWScheduler/raw/master/img/inputForm.png "Landing Page")
+Please take a look at a quick demo here:
+
+<a href="http://www.youtube.com/watch?feature=player_embedded&v=r91HMp40S3Y
+" target="_blank"><img src="http://img.youtube.com/vi/r91HMp40S3Y/0.jpg" 
+alt="IMAGE ALT TEXT HERE" width="480" height="360" border="10" /></a>
 
 # Features
 ## Course Entry
@@ -52,10 +56,4 @@ Finally, each schedule has the option to export it directly to UWFlow.
 4. Click the "Reimport" Button.
 5. Highlight the textbox, and paste!
 
-
-Please take a look at a quick demo here:
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=r91HMp40S3Y
-" target="_blank"><img src="http://img.youtube.com/vi/r91HMp40S3Y/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="240" height="180" border="10" /></a>
 
