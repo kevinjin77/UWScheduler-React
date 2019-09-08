@@ -2,7 +2,7 @@
 
 An application to help Waterloo students find the best possible schedules to fit their needs.
 
-Please take a look at a quick demo here:
+Please take a look at a quick demo here (click the image below):
 
 <a href="http://www.youtube.com/watch?feature=player_embedded&v=r91HMp40S3Y
 " target="_blank"><img src="http://img.youtube.com/vi/r91HMp40S3Y/0.jpg" 
