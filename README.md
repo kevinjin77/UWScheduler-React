@@ -2,7 +2,7 @@
 
 An application to help Waterloo students find the best possible schedules to fit their needs.
 
-![Landing Page](https://github.com/kevinjin77/UWScheduler-React/raw/master/src/assets/landingPage.png "Landing Page")
+![Landing Page](https://github.com/kevinjin77/kevinjin77.github.io/raw/master/resources/assets/landingPage.png "Landing Page")
 
 Please take a look at a quick demo here: <a href="https://www.youtube.com/watch?v=r91HMp40S3Y" target="_blank">https://www.youtube.com/watch?v=r91HMp40S3Y  
 You can also find the original web app here: <a href="http://www.uwscheduler.com" target="_blank">http://www.uwscheduler.com/
@@ -15,7 +15,7 @@ There are two methods of importing your schedule into UWScheduler.
 Under the manual entry tab, simply enter the course codes of each course. (Eg. CS241e, MATH239, BIOL130, etc.)
 The autocomplete will populate with all of the courses ever offered at Waterloo.
 
-![Manual Entry](https://github.com/kevinjin77/UWScheduler-React/raw/master/src/assets/manualEntry.gif)
+![Manual Entry](https://github.com/kevinjin77/kevinjin77.github.io/raw/master/resources/assets/manualEntry.gif)
 
 ### Importing from Quest
 To import your courses from Quest, simply follow these steps:
