@@ -2,11 +2,8 @@
 
 An application to help Waterloo students find the best possible schedules to fit their needs.
 
-Please take a look at a quick demo here (click the image below):
-
-<a href="http://www.youtube.com/watch?feature=player_embedded&v=r91HMp40S3Y
-" target="_blank"><img src="http://img.youtube.com/vi/r91HMp40S3Y/0.jpg" 
-alt="IMAGE ALT TEXT HERE" width="480" height="360" border="10" /></a>
+Please take a look at a quick demo here: <a href="https://www.youtube.com/watch?v=r91HMp40S3Y" target="_blank">https://www.youtube.com/watch?v=r91HMp40S3Y  
+You can also find the original web app here: <a href="http://www.uwscheduler.com" target="_blank">http://www.uwscheduler.com/
 
 # Features
 ## Course Entry
