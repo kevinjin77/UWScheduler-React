@@ -18,7 +18,6 @@ import Typography from '@material-ui/core/Typography';
 import Grid from '@material-ui/core/Grid';
 import Avatar from '@material-ui/core/Avatar';
 import Snackbar from '@material-ui/core/Snackbar';
-import CloseIcon from '@material-ui/icons/Close';
 
 import FullCalendar from '@fullcalendar/react'
 import timeGridPlugin from '@fullcalendar/timegrid'
@@ -265,6 +264,7 @@ ${course.section.substr(course.section.indexOf(' ') + 1)}
 ${course.section.substr(0, course.section.indexOf(' '))}
 ${course.classes[0].date.weekdays} ${convertTime(course.classes[0].date.start_time)} - ${convertTime(course.classes[0].date.end_time)}
 ${course.classes[0].location.building} ${course.classes[0].location.room}
+${fName} ${lName}
 09/04/2019 - 12/03/2019`;
 }
 
