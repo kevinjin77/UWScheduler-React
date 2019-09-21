@@ -1,11 +1,9 @@
 # UWScheduler
 
-An application to help Waterloo students find the best possible schedules to fit their needs.
+An application to help Waterloo students find the best possible schedules to fit their needs.  
+Check it out here: <a href="https://uw-scheduler.herokuapp.com/" target="_blank">uw-scheduler.herokuapp.com
 
 ![Landing Page](https://github.com/kevinjin77/kevinjin77.github.io/raw/master/resources/assets/landingPage.png "Landing Page")
-
-Please take a look at a quick demo here: <a href="https://www.youtube.com/watch?v=r91HMp40S3Y" target="_blank">https://www.youtube.com/watch?v=r91HMp40S3Y  
-You can also find the original web app here: <a href="http://www.uwscheduler.com" target="_blank">http://www.uwscheduler.com/
 
 # Features
 ## Course Entry
@@ -52,3 +50,8 @@ Finally, each schedule has the option to export it directly to UWFlow.
 5. Highlight the textbox, and paste!
 
 ![UWFlow](https://github.com/kevinjin77/kevinjin77.github.io/raw/master/resources/assets/flow.gif)
+
+### Demo
+
+Please take a look at a quick demo here: <a href="https://www.youtube.com/watch?v=r91HMp40S3Y" target="_blank">https://www.youtube.com/watch?v=r91HMp40S3Y  
+You can also find the original web app here: <a href="http://www.uwscheduler.com" target="_blank">http://www.uwscheduler.com/
