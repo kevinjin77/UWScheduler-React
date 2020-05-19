@@ -1,8 +1,8 @@
 # UWScheduler
 
 An application to help Waterloo students find the best possible schedules to fit their needs.  
-Check it out here: <a href="https://uw-scheduler.herokuapp.com/" target="_blank">uw-scheduler.herokuapp.com  
-Check out a quick demo here: <a href="https://www.youtube.com/watch?v=r91HMp40S3Y" target="_blank">https://www.youtube.com/watch?v=r91HMp40S3Y  
+Check it out here: <a href="https://uw-scheduler.herokuapp.com/" target="_blank">uw-scheduler.herokuapp.com</a>  
+Check out a quick demo here: <a href="https://www.youtube.com/watch?v=r91HMp40S3Y" target="_blank">https://www.youtube.com/watch?v=r91HMp40S3Y</a>  
 
 ![Landing Page](https://github.com/kevinjin77/kevinjin77.github.io/raw/master/resources/assets/landingPage.png "Landing Page")
 
